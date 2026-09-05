@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>A Special Day For Yuhashvi ♡ | 21st Birthday</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>" />
+</head>
+<body>
+
+  <!-- Audio Gate Overlay (Autoplay Policy Compliance) -->
+  <div id="audio-gate-overlay">
+    <div class="gate-content">
+      <div class="gate-title">A Special Story</div>
+      <div class="gate-subtitle">Tap to begin ♡</div>
+    </div>
+  </div>
+
+  <!-- Persistent Music Mute Control (Top-Right) -->
+  <button id="music-toggle-btn" class="music-toggle-btn" title="Mute/Unmute background music" aria-label="Toggle background music">
+    ♪
+  </button>
+
+  <!-- Fullscreen Particle & Effect Canvas (Bokeh, Stars, Sparkles, Confetti) -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- App Container Holding Single-Scene State Machine -->
+  <main id="app-container">
+
+    <!-- ====================================================================
+         SCENE 1: OPENING SCENE
+         Preserves Bear in pink swimsuit & deck chairs in lower-right.
+         Clean left area with question & buttons.
+         ==================================================================== -->
+    <section id="scene-page1" class="scene active">
+      <div class="page1-content-wrapper">
+        <h1 id="page1-question" class="page1-question">
+          How are you doing in your Favorite and special day of your life
+        </h1>
+        <div class="page1-buttons">
+          <button id="btn-wish-accepted" class="btn-story btn-primary">
+            <span>💖</span> Wish Accepted
+          </button>
+          <button id="btn-exit" class="btn-story">
+            <span>🚪</span> Exit
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 2: EXIT FLOW
+         Dark glassmorphism space, floating particles, Doraemon & Nobita.
+         Proximity reaction on cursor/touch smoothly transitions to smiles!
+         ==================================================================== -->
+    <section id="scene-exit" class="scene">
+      <div class="exit-container">
+        <div class="exit-characters-frame">
+          <img src="assets/images/exit_doraemon_sad.jpg" id="exit-char-sad" class="exit-char-img" alt="Doraemon and Nobita sad" />
+          <img src="assets/images/exit_doraemon_happy.jpg" id="exit-char-happy" class="exit-char-img exit-char-happy" alt="Doraemon and Nobita happy" />
+        </div>
+        <h2 id="exit-question" class="exit-question">Are you sure wanna leave?</h2>
+        <button id="btn-reconsider" class="btn-story btn-dark">
+          <span>🥺</span> Let's reconsider
+        </button>
+        <div class="proximity-hint">(Move closer to make them smile ✨)</div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 3: PIÑATA ADVENTURE
+         - Background Canvas for 3D Doraemon pile behind girl
+         - Articulated Girl walking, boy throwing bat, misses, inverted height control
+         - 4 hits -> Shatter -> 100 Transparent Doraemons burying girl
+         - Foreground Canvas for pile in front of girl
+         - Peeking reveal & "Happy Birthday Yuhashvi ♡"
+         ==================================================================== -->
+    <section id="scene-pinata" class="scene">
+      <!-- 3D Doraemon Mound Layer: Background (Behind Girl) -->
+      <canvas id="doraemon-bg-canvas"></canvas>
+
+      <!-- Inverted Spring Pinata Rig -->
+      <div id="pinata-rig" class="pinata-rig">
+        <div class="pinata-rope"></div>
+        <div id="pinata-body" class="pinata-body-wrap" title="Click or touch to swing!">
+          <img id="pinata-img-intact" src="assets/images/pinata_star_intact.png" alt="Piñata" class="pinata-render-img" />
+          <img id="pinata-img-cracked" src="assets/images/pinata_star_cracked.png" alt="Cracked Piñata" class="pinata-render-img pinata-cracked" />
+        </div>
+      </div>
+
+      <!-- Right Handle Height Indicator -->
+      <div id="rope-indicator" class="rope-indicator-handle">
+        <div style="font-size: 24px;">↕️</div>
+        <div class="rope-indicator-text">Help her reach it! Move up & down</div>
+      </div>
+
+      <!-- Comic Pop Effect & Speech Bubble -->
+      <div id="bam-effect" class="comic-bam-effect">BAM!</div>
+      <div id="speech-bubble" class="speech-bubble">Help me! 🥺</div>
+
+      <!-- Ground Stage for Articulated Characters -->
+      <div class="characters-stage">
+        <!-- Boy Character Container -->
+        <div id="boy-wrap" class="boy-peeking-wrap"></div>
+
+        <!-- Flying Baseball Bat Prop -->
+        <div id="bat-prop" class="bat-prop">
+          <svg viewBox="0 0 60 120" width="100%" height="100%">
+            <path d="M26,115 L26,95 C25,80 18,30 18,12 C18,4 32,4 32,12 C32,30 29,80 28,95 L28,115 Z" fill="#c07e4d" stroke="#60371a" stroke-width="2" />
+            <rect x="24" y="96" width="6" height="18" rx="2" fill="#fff5ee" />
+          </svg>
+        </div>
+
+        <!-- Girl Character Puppet Container (Reference Model) -->
+        <div id="girl-wrap" class="girl-sprite-wrap"></div>
+
+        <!-- Full 3D Doraemon Mound & Peek Reveal Layer -->
+        <div id="mound-overlay-wrap" class="mound-overlay-wrap">
+          <img id="mound-img-full" src="assets/images/doraemon_mound_full.png" alt="Doraemon Mound" class="mound-overlay-img" />
+          <img id="girl-img-peek" src="assets/images/girl_peek_pile.png" alt="Girl emerging smiling" class="mound-overlay-img girl-peek-img" />
+          <img id="girl-img-reveal" src="assets/images/girl_birthday_reveal.png" alt="Birthday Reveal Arch" class="mound-overlay-img girl-reveal-arch-img" />
+        </div>
+      </div>
+
+      <!-- 3D Doraemon Mound Layer: Foreground (In Front of Girl) -->
+      <canvas id="doraemon-fg-canvas"></canvas>
+
+      <!-- Mobile Tap Prompt -->
+      <div id="btn-mobile-tap" class="mobile-tap-prompt">
+        <button class="btn-story btn-primary">🎯 Tap to Hit Piñata!</button>
+      </div>
+
+      <!-- Birthday Reveal Overlay -->
+      <div id="birthday-reveal-wrap" class="birthday-reveal-wrap">
+        <button id="btn-continue-page2" class="btn-story btn-primary">
+          <span>💌</span> I have something for you
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 4: PAGE 2 & ENVELOPE
+         - Calmer pastel scene
+         - Shaking envelope -> Flap opens -> Letter rises -> Typewriter reveal
+         ==================================================================== -->
+    <section id="scene-page2" class="scene">
+      <div class="envelope-screen-container">
+        <h2 id="page2-intro-title" class="page2-intro-title">Since today is your special day...</h2>
+        <p id="page2-intro-desc" class="page2-intro-desc"></p>
+
+        <!-- Interactive Envelope -->
+        <div id="envelope-wrap" class="envelope-interactive-wrap" title="Click to open your envelope">
+          <div class="envelope-base">
+            <div class="envelope-label-badge">For Yuhashvi ♡</div>
+          </div>
+          <div id="envelope-flap" class="envelope-flap"></div>
+          <div id="letter-paper" class="letter-paper">
+            <div id="letter-text-content" class="letter-text-content"></div>
+          </div>
+        </div>
+
+        <button id="btn-open-envelope" class="btn-story btn-primary">
+          <span>💌</span> Open Your Envelope
+        </button>
+        <button id="btn-continue-photos" class="btn-story" style="display: none; margin-top: 18px;">
+          <span>🌸</span> Continue
+        </button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 5: PHOTO GALLERY & SECRET DORAEMON
+         - Polaroid scrapbook cards
+         - Hidden Doraemon easter egg -> Gift box -> Confetti
+         ==================================================================== -->
+    <section id="scene-gallery" class="scene">
+      <div class="gallery-container">
+        <h2 id="gallery-heading" class="gallery-heading">
+          A few pictures of someone who deserves a beautiful day ♡
+        </h2>
+        <div id="polaroid-grid" class="polaroid-grid"></div>
+        <button id="btn-one-more-surprise" class="btn-story btn-primary">
+          <span>✨</span> One More Surprise
+        </button>
+      </div>
+
+      <!-- Secret Doraemon Gift Modal -->
+      <div id="secret-popup-modal" class="secret-popup-modal">
+        <div id="secret-popup-card" class="secret-popup-card">
+          <img src="assets/images/doraemon_mini.jpg" class="secret-char-avatar" alt="Doraemon" />
+          <h3 id="secret-hint-text" class="secret-hint-text">Psst... I have one more thing for you! 👀</h3>
+          <img src="assets/images/gift_box.jpg" id="secret-gift-box-img" class="secret-gift-box-img" alt="Gift Box" title="Click to open!" />
+          <div>
+            <button id="btn-open-gift" class="btn-story btn-primary">
+              <span>🎁</span> Open
+            </button>
+            <button id="btn-continue-final" class="btn-story" style="display: none;">
+              <span>🌟</span> Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 6: FINAL NIGHT SCENE & CANDLE BLOW
+         - Peaceful nighttime environment with moon & stars
+         - Same girl beside cake with "21" candle
+         - Animated candle blow with breath stream & flame extinguishing
+         - "Keep smiling. ♡" and Experience Again loop
+         ==================================================================== -->
+    <section id="scene-final" class="scene">
+      <div class="final-screen-card">
+        <h2 id="final-title-1" class="final-title-1">Happy Birthday</h2>
+        <h1 id="final-title-2" class="final-title-2">Yuhashvi ♡</h1>
+        <p id="final-message" class="final-message-text"></p>
+
+        <!-- Interactive Animated Cake Component -->
+        <div id="final-cake-stage" style="position: relative; width: 220px; height: 160px; margin: 10px auto 16px;">
+          <!-- Birthday Cake Graphic -->
+          <svg viewBox="0 0 200 150" width="100%" height="100%">
+            <defs>
+              <radialGradient id="cake-glow" cx="50%" cy="40%" r="50%">
+                <stop offset="0%" stop-color="#fff5cc" />
+                <stop offset="100%" stop-color="#ffd566" stop-opacity="0.1" />
+              </radialGradient>
+              <radialGradient id="flame-grad" cx="50%" cy="60%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="35%" stop-color="#ffea66" />
+                <stop offset="80%" stop-color="#ff5511" />
+                <stop offset="100%" stop-color="#cc2200" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <!-- Table & Plate -->
+            <ellipse cx="100" cy="138" rx="80" ry="12" fill="#d0bba8" opacity="0.6" />
+            <ellipse cx="100" cy="134" rx="70" ry="10" fill="#ffffff" stroke="#ecd7ce" stroke-width="1.5" />
+
+            <!-- Cake Base -->
+            <path d="M40,95 Q100,105 160,95 L160,125 Q100,135 40,125 Z" fill="#ffe2eb" />
+            <path d="M40,95 Q100,105 160,95 L160,75 Q100,85 40,75 Z" fill="#ffd0de" />
+            <!-- Frosting drips -->
+            <path d="M40,75 Q50,90 60,78 Q70,92 80,80 Q90,94 100,80 Q110,94 120,80 Q130,92 140,78 Q150,90 160,75 Q100,65 40,75 Z" fill="#ffffff" />
+
+            <!-- Golden Number "21" Candle -->
+            <text x="78" y="65" font-family="'Times New Roman', serif" font-size="28" font-weight="bold" fill="#f8cf50" stroke="#a0750c" stroke-width="0.8">2</text>
+            <text x="104" y="65" font-family="'Times New Roman', serif" font-size="28" font-weight="bold" fill="#f8cf50" stroke="#a0750c" stroke-width="0.8">1</text>
+
+            <!-- Candle Wick -->
+            <line x1="91" y1="40" x2="91" y2="35" stroke="#333333" stroke-width="2" />
+            <line x1="113" y1="40" x2="113" y2="35" stroke="#333333" stroke-width="2" />
+
+            <!-- Animated Candle Flame Group -->
+            <g id="cake-candle-flame" transform-origin="102 30">
+              <!-- Flame 1 -->
+              <ellipse cx="91" cy="27" rx="5.5" ry="10" fill="url(#flame-grad)" />
+              <ellipse cx="91" cy="28" rx="2.5" ry="5" fill="#ffffff" />
+              <!-- Flame 2 -->
+              <ellipse cx="113" cy="27" rx="5.5" ry="10" fill="url(#flame-grad)" />
+              <ellipse cx="113" cy="28" rx="2.5" ry="5" fill="#ffffff" />
+            </g>
+
+            <!-- Smoke Wisp on Candle Blow -->
+            <g id="cake-smoke-wisp" opacity="0" transform-origin="102 30">
+              <path d="M91,32 Q88,20 95,12 T92,0" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" />
+              <path d="M113,32 Q110,20 117,12 T114,0" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- Girl Puppet Container (Final Scene) -->
+        <div id="final-girl-wrap" style="position: absolute; bottom: -20px; left: 40px; width: 150px; height: 230px; pointer-events: none;"></div>
+
+        <button id="btn-one-last-thing" class="btn-story btn-primary">
+          <span>✨</span> One Last Thing
+        </button>
+
+        <div id="final-smiling-text" class="final-smiling-text">
+          Keep smiling. ♡
+        </div>
+
+        <button id="btn-experience-again" class="btn-story" style="display: none; margin-top: 14px;">
+          ↻ Experience Again
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script Modules in Strict Dependency Order -->
+  <script src="config.js"></script>
+  <script src="js/audio-system.js"></script>
+  <script src="js/particle-system.js"></script>
+  <script src="js/doraemon-physics.js"></script>
+  <script src="js/characters/girl-character.js"></script>
+  <script src="js/characters/boy-character.js"></script>
+  <script src="js/scenes/page1-scene.js"></script>
+  <script src="js/scenes/exit-scene.js"></script>
+  <script src="js/scenes/pinata-scene.js"></script>
+  <script src="js/scenes/page2-envelope.js"></script>
+  <script src="js/scenes/photo-gallery.js"></script>
+  <script src="js/scenes/final-scene.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

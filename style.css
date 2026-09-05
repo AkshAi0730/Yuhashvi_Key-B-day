@@ -1,0 +1,1285 @@
+/* ==========================================================================
+   YUHASHVI'S 21ST BIRTHDAY EXPERIENCE - MASTER STYLESHEET
+   Strict Single-Scene State Machine, 100vw x 100vh, Zero Scroll
+   Articulated Character Animation & Cinematic Aesthetics
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary-pink: #ff8da1;
+  --soft-blush: #ffdbe3;
+  --warm-gold: #f8dfa1;
+  --glow-gold: rgba(254, 222, 140, 0.6);
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --dark-glass-bg: rgba(18, 22, 36, 0.72);
+  --dark-glass-border: rgba(255, 255, 255, 0.18);
+  --text-dark: #3a2830;
+  --text-muted: #6e5860;
+  --font-cursive: 'Blackadder ITC', 'Great Vibes', 'Alex Brush', 'Dancing Script', cursive;
+  --font-serif: 'Times New Roman', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --transition-smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==========================================================================
+   VIEWPORT ENFORCEMENT — ZERO SCROLLING GUARANTEED
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-family: var(--font-sans);
+  color: var(--text-dark);
+  background-color: #0c0e15;
+}
+
+#app-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden !important;
+}
+
+/* STRICT FINITE STATE MACHINE: ONLY ONE SCENE IN LAYOUT AT ANY TIME */
+.scene {
+  display: none !important;
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.scene.active {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 10;
+}
+
+#scene-pinata.active {
+  display: block !important;
+}
+
+#scene-page1.active {
+  display: flex !important;
+  align-items: center;
+}
+
+#scene-exit.active {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#scene-page2.active {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+#scene-gallery.active {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#scene-final.active {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Particle & Physics Overlay Canvases */
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Dual Canvases for 3D Doraemon Doll Burial Pile */
+#doraemon-bg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 18; /* Behind girl */
+}
+
+#doraemon-fg-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 26; /* In front of girl (covers her in 3D mound) */
+}
+
+/* ==========================================================================
+   GLOBAL AUDIO GATE & PERSISTENT CONTROLS
+   ========================================================================== */
+.music-toggle-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+.music-toggle-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 6px 24px rgba(255, 141, 161, 0.4);
+}
+
+.music-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Tap To Begin Audio Overlay */
+#audio-gate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 245, 240, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
+#audio-gate-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.gate-content {
+  text-align: center;
+  padding: 34px 44px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 12px 48px rgba(255, 141, 161, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  animation: pulseGentle 2.5s infinite ease-in-out;
+}
+
+.gate-title {
+  font-family: var(--font-cursive);
+  font-size: 48px;
+  color: #c94663;
+  margin-bottom: 8px;
+}
+
+.gate-subtitle {
+  font-size: 19px;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+@keyframes pulseGentle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* ==========================================================================
+   BUTTON SPECIFICATION (Section 11 & 24)
+   - Font: Times New Roman, 22px
+   - Rounded rectangles, soft shadow, subtle gradient/glass
+   - Hover lift, subtle glow, pressed tactile state
+   ========================================================================== */
+.btn-story {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: normal;
+  padding: 13px 32px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 235, 240, 0.7) 100%);
+  color: #4a3038;
+  box-shadow: 0 6px 20px rgba(180, 110, 130, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 0.3s var(--transition-smooth), box-shadow 0.3s var(--transition-smooth), background 0.3s ease, color 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+}
+
+.btn-story:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(255, 141, 161, 0.35), 0 0 16px rgba(255, 220, 230, 0.6);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 225, 235, 0.85) 100%);
+  color: #2b1820;
+}
+
+.btn-story:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 4px 12px rgba(180, 110, 130, 0.25);
+}
+
+.btn-story.btn-primary {
+  background: linear-gradient(135deg, rgba(255, 240, 245, 0.9) 0%, rgba(255, 205, 220, 0.8) 100%);
+  border-color: rgba(255, 180, 200, 0.7);
+}
+
+.btn-story.btn-dark {
+  background: linear-gradient(135deg, rgba(42, 48, 70, 0.85) 0%, rgba(24, 28, 44, 0.9) 100%);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #f5f0f5;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.btn-story.btn-dark:hover {
+  background: linear-gradient(135deg, rgba(62, 70, 100, 0.9) 0%, rgba(35, 40, 62, 0.95) 100%);
+  box-shadow: 0 12px 32px rgba(100, 150, 255, 0.3), 0 0 18px rgba(255, 180, 200, 0.4);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   PAGE 1: OPENING SCENE (Section 9 - 11)
+   - Background preserves bear vinyl figure in lower-right
+   - Clean left area with question & buttons
+   - Font: Blackadder ITC (~42px)
+   ========================================================================== */
+#scene-page1 {
+  background-image: url('assets/images/page1_bear_scene.jpg');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+}
+
+.page1-content-wrapper {
+  width: 48%;
+  max-width: 620px;
+  margin-left: 7%;
+  padding: 40px 44px;
+  background: radial-gradient(ellipse at center, rgba(255, 250, 245, 0.88) 0%, rgba(255, 245, 240, 0.55) 75%, transparent 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 36px;
+  box-shadow: 0 12px 40px rgba(160, 110, 90, 0.1);
+  animation: fadeInSoft 1.4s var(--transition-smooth) forwards;
+}
+
+.page1-question {
+  font-family: var(--font-cursive);
+  font-size: 42px;
+  line-height: 1.28;
+  color: #462518;
+  margin-bottom: 32px;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(90, 50, 30, 0.15);
+  letter-spacing: 0.5px;
+}
+
+.page1-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* ==========================================================================
+   EXIT SCENE (Section 14 - 17)
+   - Dark glassmorphism space, floating particles
+   - Doraemon & Nobita centered
+   - Proximity crossfade: sad -> curious -> happy with hearts
+   ========================================================================== */
+#scene-exit {
+  background: radial-gradient(circle at center, #1b2030 0%, #0c0e15 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.exit-container {
+  position: relative;
+  width: 90%;
+  max-width: 760px;
+  text-align: center;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.exit-characters-frame {
+  position: relative;
+  width: 100%;
+  max-width: 580px;
+  height: 330px;
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65), 0 0 30px rgba(100, 150, 255, 0.18);
+  border: 1px solid var(--dark-glass-border);
+  margin-bottom: 22px;
+  background: #080a10;
+}
+
+.exit-char-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.exit-char-happy {
+  opacity: 0;
+}
+
+.exit-question {
+  font-family: var(--font-cursive);
+  font-size: 38px;
+  color: #e8ecf8;
+  margin-bottom: 22px;
+  text-shadow: 0 0 20px rgba(160, 200, 255, 0.45);
+}
+
+.proximity-hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 14px;
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   PIÑATA SCENE (Sections 19 - 41)
+   - Fairytale outdoor background
+   - Inverted spring-interpolated rope height control
+   - Articulated Girl & Boy characters
+   - Comic BAM!, 4 Hits, Shatter fragments
+   - Dual-layer 3D Doraemon burial mound & peek-out
+   ========================================================================== */
+#scene-pinata {
+  background-image: url('assets/images/pinata_fairytale_bg.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Inverted Spring Pinata Rig */
+.pinata-rig {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.pinata-rope {
+  width: 4px;
+  height: 140px;
+  background: repeating-linear-gradient(45deg, #a67c52, #a67c52 5px, #cbb18a 5px, #cbb18a 10px);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  transform-origin: top center;
+}
+
+.pinata-body-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  cursor: grab;
+  pointer-events: auto;
+  transition: transform 0.15s ease;
+}
+
+.pinata-render-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.32));
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  pointer-events: auto;
+}
+
+.pinata-cracked {
+  opacity: 0;
+  display: none;
+}
+
+/* Right Handle Instruction Indicator */
+.rope-indicator-handle {
+  position: absolute;
+  right: 30px;
+  top: 38%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  animation: floatIndicator 3s infinite ease-in-out;
+}
+
+.rope-indicator-handle.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rope-indicator-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #b33951;
+  text-align: center;
+  max-width: 150px;
+}
+
+@keyframes floatIndicator {
+  0%, 100% { transform: translateY(-50%); }
+  50% { transform: translateY(-56%); }
+}
+
+/* Stage & Articulated Character Layers */
+.characters-stage {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 380px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Girl Character Puppet */
+.girl-sprite-wrap {
+  position: absolute;
+  bottom: 25px;
+  left: -220px; /* Offscreen left */
+  width: 180px;
+  height: 270px;
+  pointer-events: none;
+  z-index: 22;
+}
+
+.girl-puppet {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.girl-contact-shadow {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(40, 20, 15, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.girl-torso-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 90%;
+}
+
+.girl-char-img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 16px rgba(40, 20, 15, 0.28));
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Articulated Bat Hand attached to girl */
+.girl-bat-hand {
+  position: absolute;
+  top: 138px;
+  left: 124px;
+  width: 50px;
+  height: 100px;
+  transform-origin: 10px 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 24;
+}
+
+.bat-svg-prop {
+  filter: drop-shadow(2px 4px 8px rgba(0, 0, 0, 0.35));
+}
+
+/* Breath Stream Particles for Candle Blow */
+.girl-breath-stream {
+  position: absolute;
+  top: 100px;
+  right: -25px;
+  width: 60px;
+  height: 24px;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.65) 0%, transparent 75%);
+  filter: blur(4px);
+  transform: scale(0.5);
+  transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.girl-breath-stream.active {
+  opacity: 1;
+  transform: scale(1.4) translateX(20px);
+}
+
+/* Boy Peeking Character */
+.boy-peeking-wrap {
+  position: absolute;
+  bottom: 25px;
+  left: 0;
+  width: 180px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 23;
+}
+
+.boy-puppet-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-260px);
+}
+
+.boy-char-img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.3));
+  transition: opacity 0.2s ease;
+}
+
+.boy-img-throw {
+  opacity: 0;
+}
+
+/* Full 3D Doraemon Mound & Peek Reveal Overlay */
+.mound-overlay-wrap {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 580px;
+  height: 520px;
+  pointer-events: none;
+  z-index: 28;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+.mound-overlay-wrap.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mound-overlay-img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.35));
+  transition: opacity 0.8s ease-in-out, transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.girl-peek-img, .girl-reveal-arch-img {
+  opacity: 0;
+}
+
+/* Traveling Bat Prop during throwing flight */
+.bat-prop {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  opacity: 0;
+  display: none;
+  pointer-events: none;
+  z-index: 30;
+}
+
+/* Comic BAM! Pop Effect */
+.comic-bam-effect {
+  position: absolute;
+  z-index: 45;
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-size: 42px;
+  color: #ff3366;
+  text-shadow: 3px 3px 0 #ffe600, -2px -2px 0 #ffffff, 0 0 15px rgba(255, 50, 100, 0.8);
+  transform: scale(0) rotate(-12deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.28s ease;
+}
+
+.comic-bam-effect.pop {
+  transform: scale(1.3) rotate(-10deg);
+  opacity: 1;
+}
+
+/* Speech Bubble */
+.speech-bubble {
+  position: absolute;
+  bottom: 270px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 22px;
+  border-radius: 20px;
+  border: 2px solid #ff8da1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  font-size: 19px;
+  font-weight: 700;
+  color: #9c2743;
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.38s var(--transition-smooth), opacity 0.38s ease;
+}
+
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 8px 0;
+  border-style: solid;
+  border-color: #ff8da1 transparent transparent;
+}
+
+.speech-bubble.active {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+/* Mobile Pinata Tap Button */
+.mobile-tap-prompt {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 38;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.mobile-tap-prompt.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Birthday Reveal Card & Button (Section 29) */
+.birthday-reveal-wrap {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s ease, transform 1.2s var(--transition-smooth);
+}
+
+.birthday-reveal-wrap.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.reveal-line1 {
+  font-family: var(--font-cursive);
+  font-size: 52px;
+  color: #9c2743;
+  text-shadow: 0 2px 14px rgba(255, 255, 255, 0.95), 0 0 20px rgba(255, 180, 200, 0.85);
+  margin-bottom: 6px;
+}
+
+.reveal-line2 {
+  font-family: var(--font-cursive);
+  font-size: 64px;
+  color: #d13d62;
+  text-shadow: 0 3px 18px rgba(255, 255, 255, 0.95), 0 0 25px rgba(255, 140, 160, 0.9);
+  margin-bottom: 24px;
+}
+
+/* ==========================================================================
+   PAGE 2: ENVELOPE SCENE (Sections 30 - 32)
+   - Calmer atmosphere, pastel pink/cream gradient
+   - Interactive envelope opening & typewriter reveal of placeholder
+   ========================================================================== */
+#scene-page2 {
+  background: linear-gradient(135deg, #ffeef2 0%, #fff7ee 50%, #f7eaff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.envelope-screen-container {
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 48px rgba(180, 110, 130, 0.15);
+  padding: 40px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: auto;
+}
+
+.page2-intro-title {
+  font-family: var(--font-cursive);
+  font-size: 40px;
+  color: #8c3b52;
+  margin-bottom: 12px;
+}
+
+.page2-intro-desc {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 540px;
+  margin-bottom: 26px;
+}
+
+/* Interactive Envelope */
+.envelope-interactive-wrap {
+  position: relative;
+  width: 320px;
+  height: 200px;
+  margin: 10px auto 26px;
+  perspective: 800px;
+  cursor: pointer;
+}
+
+.envelope-base {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 160px;
+  background: #fdf6f0;
+  border: 2px solid #eed6cc;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  z-index: 2;
+}
+
+.envelope-label-badge {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 8px 18px;
+  border-radius: 18px;
+  border: 1px dashed #dca5b5;
+  font-family: var(--font-cursive);
+  font-size: 24px;
+  color: #b54768;
+  z-index: 4;
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 160px solid transparent;
+  border-right: 160px solid transparent;
+  border-top: 96px solid #f6e6de;
+  transform-origin: top;
+  transition: transform 0.6s ease;
+  z-index: 5;
+}
+
+.envelope-flap.open {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.letter-paper {
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  right: 15px;
+  height: 140px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 24px 20px;
+  z-index: 3;
+  transition: transform 0.8s var(--transition-smooth), height 0.8s var(--transition-smooth), opacity 0.6s ease;
+  text-align: left;
+  opacity: 0.9;
+}
+
+.letter-paper.risen {
+  transform: translateY(-150px);
+  height: 270px;
+  width: 370px;
+  left: -25px;
+  z-index: 10;
+  opacity: 1;
+  box-shadow: 0 16px 40px rgba(180, 110, 130, 0.25);
+  border: 1px solid #ffd8e2;
+}
+
+.letter-text-content {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3e262f;
+  white-space: pre-line;
+}
+
+/* ==========================================================================
+   PHOTO SECTION (Sections 33 - 37)
+   - Tasteful scrapbook / polaroid gallery
+   - Hidden Doraemon easter egg & gift box popup
+   ========================================================================== */
+#scene-gallery {
+  background: radial-gradient(circle at 50% 40%, #fff7f2 0%, #fae8ee 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.gallery-container {
+  width: 100%;
+  max-width: 1060px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 5;
+  margin: auto;
+}
+
+.gallery-heading {
+  font-family: var(--font-cursive);
+  font-size: 38px;
+  color: #7a3248;
+  text-align: center;
+  margin-bottom: 28px;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.8);
+}
+
+.polaroid-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+.polaroid-card {
+  background: #ffffff;
+  padding: 12px 12px 20px 12px;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(100, 60, 70, 0.12);
+  width: 220px;
+  cursor: pointer;
+  transition: transform 0.38s var(--transition-smooth), box-shadow 0.38s var(--transition-smooth), z-index 0.2s ease;
+  position: relative;
+  border: 1px solid rgba(240, 220, 225, 0.6);
+}
+
+.polaroid-card:hover, .polaroid-card:focus {
+  transform: scale(1.06) rotate(0deg) !important;
+  box-shadow: 0 16px 36px rgba(255, 141, 161, 0.3), 0 0 20px rgba(255, 230, 235, 0.8);
+  z-index: 15;
+}
+
+.polaroid-img-frame {
+  width: 100%;
+  height: 190px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #fdf5f5;
+  margin-bottom: 10px;
+}
+
+.polaroid-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.polaroid-card:hover .polaroid-img {
+  transform: scale(1.05);
+}
+
+.polaroid-caption {
+  font-family: var(--font-cursive);
+  font-size: 19px;
+  color: #5c3b46;
+  text-align: center;
+  min-height: 26px;
+}
+
+/* Hidden Doraemon Easter Egg */
+.secret-doraemon-trigger {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  bottom: -15px;
+  right: -10px;
+  cursor: pointer;
+  z-index: 12;
+  opacity: 0.45;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.secret-doraemon-trigger:hover {
+  opacity: 1;
+  transform: scale(1.2) rotate(15deg);
+}
+
+.secret-popup-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(20, 15, 25, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.secret-popup-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.secret-popup-card {
+  width: 90%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 32px;
+  padding: 32px 26px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(255, 141, 161, 0.35);
+  border: 2px solid #ffdbe3;
+  transform: scale(0.85);
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.secret-popup-modal.active .secret-popup-card {
+  transform: scale(1);
+}
+
+.secret-char-avatar {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+}
+
+.secret-hint-text {
+  font-family: var(--font-cursive);
+  font-size: 27px;
+  color: #9c2743;
+  margin-bottom: 16px;
+}
+
+.secret-gift-box-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin: 0 auto 16px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.secret-gift-box-img:hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* ==========================================================================
+   FINAL SCENE: NIGHTTIME CELEBRATION (Sections 38 - 44)
+   - Deep muted blue/purple sky with moon & stars
+   - Same girl standing beside birthday cake with '21'
+   - Animated candle flame flickering & extinguishing on blow
+   - Replay resets all state without reload
+   ========================================================================== */
+#scene-final {
+  background-image: url('assets/images/final_night_lit.jpg');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 45px;
+  position: relative;
+  transition: filter 0.8s ease;
+}
+
+#scene-final.blown-out {
+  background-image: url('assets/images/final_night_blown.jpg');
+}
+
+.final-screen-card {
+  width: 90%;
+  max-width: 620px;
+  background: rgba(20, 24, 42, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+  padding: 32px 38px;
+  text-align: center;
+  color: #ffffff;
+  z-index: 10;
+  animation: fadeInSoft 1.4s ease forwards;
+}
+
+.final-title-1 {
+  font-family: var(--font-cursive);
+  font-size: 46px;
+  color: #ffcad4;
+  margin-bottom: 4px;
+  text-shadow: 0 0 16px rgba(255, 200, 220, 0.5);
+}
+
+.final-title-2 {
+  font-family: var(--font-cursive);
+  font-size: 56px;
+  color: #ffd670;
+  margin-bottom: 18px;
+  text-shadow: 0 0 20px rgba(255, 214, 112, 0.6);
+}
+
+.final-message-text {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #e5e8f5;
+  margin-bottom: 24px;
+}
+
+.final-smiling-text {
+  font-family: var(--font-cursive);
+  font-size: 48px;
+  color: #ffe5ec;
+  text-shadow: 0 0 24px rgba(255, 180, 210, 0.8), 0 0 40px rgba(255, 220, 240, 0.6);
+  margin-bottom: 20px;
+  display: none;
+}
+
+/* Shared Keyframes */
+@keyframes fadeInSoft {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shakeGentle {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-3px, 2px) rotate(-1.5deg); }
+  40% { transform: translate(3px, -2px) rotate(1.5deg); }
+  60% { transform: translate(-2px, -1px) rotate(-1deg); }
+  80% { transform: translate(2px, 1px) rotate(1deg); }
+}
+
+.shaking {
+  animation: shakeGentle 0.4s ease-in-out;
+}
+
+/* Mobile Responsive Optimization */
+@media (max-width: 900px) {
+  #scene-page1 {
+    background-position: 70% center;
+    align-items: flex-start;
+    padding-top: 55px;
+  }
+
+  .page1-content-wrapper {
+    width: 88%;
+    max-width: none;
+    margin: 0 auto;
+    padding: 26px 22px;
+    background: radial-gradient(ellipse at center, rgba(255, 250, 245, 0.94) 0%, rgba(255, 245, 240, 0.88) 100%);
+  }
+
+  .page1-question {
+    font-size: 32px;
+    margin-bottom: 22px;
+  }
+
+  .btn-story {
+    font-size: 19px;
+    padding: 12px 24px;
+  }
+
+  .exit-characters-frame {
+    height: 240px;
+  }
+
+  .exit-question {
+    font-size: 30px;
+  }
+
+  .characters-stage {
+    height: 300px;
+  }
+
+  .girl-sprite-wrap {
+    width: 140px;
+    height: 210px;
+  }
+
+  .pinata-body-wrap {
+    width: 140px;
+    height: 140px;
+  }
+
+  .reveal-line1 {
+    font-size: 38px;
+  }
+
+  .reveal-line2 {
+    font-size: 48px;
+  }
+
+  .envelope-screen-container {
+    padding: 28px 18px;
+  }
+
+  .letter-paper.risen {
+    width: 300px;
+    left: 10px;
+    height: 250px;
+  }
+
+  .polaroid-card {
+    width: 155px;
+    padding: 10px 10px 16px 10px;
+  }
+
+  .polaroid-img-frame {
+    height: 135px;
+  }
+
+  .polaroid-caption {
+    font-size: 16px;
+  }
+
+  .final-screen-card {
+    padding: 24px 20px;
+  }
+
+  .final-title-1 {
+    font-size: 36px;
+  }
+
+  .final-title-2 {
+    font-size: 42px;
+  }
+}
