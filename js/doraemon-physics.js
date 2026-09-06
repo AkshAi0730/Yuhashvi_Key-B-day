@@ -21,11 +21,13 @@ class DoraemonPhysicsEngine {
     this.isRunning = false;
     this.animId = null;
 
-    // Pre-render a high-res crisp transparent vector Doraemon sprite to an offscreen canvas
-    this.spriteCanvas = document.createElement('canvas');
-    this.spriteCanvas.width = 128;
-    this.spriteCanvas.height = 128;
-    this.renderVectorDoraemonSprite(this.spriteCanvas.getContext('2d'), 128);
+    // Load authentic 3D Collectible Doraemon figure (from user's media_1788703101902.png)
+    this.doraemonImg = new Image();
+    this.doraemonImg.src = 'assets/images/doraemon_doll_3d.png';
+    this.imageLoaded = false;
+    this.doraemonImg.onload = () => {
+      this.imageLoaded = true;
+    };
 
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -170,57 +172,153 @@ class DoraemonPhysicsEngine {
     ctx.restore();
   }
 
-  // Erupt 100 Dolls in 5 waves from broken pinata opening, burying the girl in a 3D mound
+  // Generate tightly overlapping, organically tumbled triangular mound target positions (ZERO gaps)
+  generateGaplessTriangularTargets(girlCenterX, girlGroundY) {
+    const targets = [];
+    const baseWidth = 485; // Broad base covering ground around girl
+    const totalTiers = 9;
+    const tierHeight = 25;
+
+    // 1. Foundational interlocking honeycomb tiers (solid dense bed)
+    for (let r = 0; r < totalTiers; r++) {
+      const y = girlGroundY - 14 - r * tierHeight;
+      // Natural organic bell-curved mound envelope
+      const rowWidth = baseWidth * Math.pow(1 - (r / (totalTiers + 0.3)), 0.78);
+      // Tight step <= 23px for 54-64px dolls (> 55% overlap!)
+      const count = Math.max(2, Math.ceil(rowWidth / 23));
+      const step = count > 1 ? rowWidth / (count - 1) : 0;
+      const startX = girlCenterX - rowWidth / 2;
+      const rowStagger = (r % 2 === 1) ? 8 : -8;
+
+      for (let c = 0; c < count; c++) {
+        const x = count > 1 ? startX + c * step + rowStagger : girlCenterX;
+        targets.push({
+          targetX: x + (Math.random() - 0.5) * 12,
+          targetY: y + (Math.random() - 0.5) * 8,
+          // Natural lively tumble angles
+          rotation: (Math.random() - 0.5) * 0.85,
+          size: 53 + Math.random() * 11, // 53px to 64px 3D vinyl figure
+          tier: r,
+          isForeground: Math.random() < 0.95 // 95% on fgCanvas to physically cover girl
+        });
+      }
+    }
+
+    // 2. Surface tumble dolls scattered organically across the mound face for authentic pile texture
+    const surfaceCount = 28;
+    for (let s = 0; s < surfaceCount; s++) {
+      const r = Math.floor(Math.random() * (totalTiers - 1));
+      const rowWidth = baseWidth * Math.pow(1 - (r / (totalTiers + 0.3)), 0.78) * 0.9;
+      const x = girlCenterX + (Math.random() - 0.5) * rowWidth;
+      const y = girlGroundY - 18 - r * tierHeight + (Math.random() - 0.5) * 14;
+      targets.push({
+        targetX: x,
+        targetY: y,
+        // Jaunty surface tilt angles
+        rotation: (Math.random() - 0.5) * 1.3,
+        size: 52 + Math.random() * 12,
+        tier: r,
+        isForeground: true
+      });
+    }
+
+    return targets;
+  }
+
+  // Erupt 111 Dolls in waves from broken pinata opening, burying the girl in a 100% gapless triangular pile
   startShower(pinataX, pinataY, girlCenterX, girlGroundY, onBuriedComplete) {
     this.dolls = [];
     this.isRunning = true;
-    const totalDolls = 105;
-    const waveCount = 5;
-    const dollsPerWave = Math.floor(totalDolls / waveCount);
+    this.lastGirlCenterX = girlCenterX;
+    this.lastGirlGroundY = girlGroundY;
+
+    const targets = this.generateGaplessTriangularTargets(girlCenterX, girlGroundY);
+    // Sort from bottom tiers to top tiers so mound naturally builds upward
+    targets.sort((a, b) => a.tier - b.tier);
+
+    const waveCount = 6;
+    const waveSize = Math.ceil(targets.length / waveCount);
 
     for (let wave = 0; wave < waveCount; wave++) {
+      const waveTargets = targets.slice(wave * waveSize, (wave + 1) * waveSize);
       setTimeout(() => {
-        for (let i = 0; i < dollsPerWave; i++) {
-          const dollIndex = wave * dollsPerWave + i;
-          
-          // Mound resting layer calculation:
-          // Center of mound is girlCenterX, forming a 3D hill that covers her
-          const moundOffset = (Math.random() - 0.5) * 160;
-          const targetX = girlCenterX + moundOffset;
-          // Closer to center of girl = higher resting level (burying her feet, legs, skirt, shoulders)
-          const distToGirl = Math.abs(moundOffset);
-          const moundHeight = Math.max(0, 140 - distToGirl * 0.85);
-          const groundTarget = girlGroundY - moundHeight + (Math.random() - 0.5) * 20;
-
-          // 55% in front of girl, 45% behind girl for true 3D visual depth
-          const isForeground = Math.random() < 0.58;
+        for (let i = 0; i < waveTargets.length; i++) {
+          const t = waveTargets[i];
+          // Natural parabolic launch towards assigned target slot
+          const vx = (t.targetX - pinataX) * 0.024 + (Math.random() - 0.5) * 3.4;
+          const vy = -(Math.random() * 3.4 + 1.4);
 
           this.dolls.push({
-            id: dollIndex,
-            x: pinataX + (Math.random() - 0.5) * 35,
-            y: pinataY + Math.random() * 20,
-            vx: (targetX - pinataX) * 0.024 + (Math.random() - 0.5) * 4.5,
-            vy: Math.random() * 4 + 3.5,
-            gravity: 0.36,
-            targetGround: groundTarget,
+            id: this.dolls.length,
+            x: pinataX + (Math.random() - 0.5) * 32,
+            y: pinataY + Math.random() * 15,
+            targetX: t.targetX,
+            targetY: t.targetY,
+            vx: vx,
+            vy: vy,
+            gravity: 0.44,
             rotation: Math.random() * Math.PI * 2,
-            vRot: (Math.random() - 0.5) * 0.22,
-            size: Math.random() * 12 + 30, // 30px to 42px (much smaller than girl)
+            targetRotation: t.rotation,
+            vRot: (Math.random() - 0.5) * 0.18,
+            size: t.size,
+            tier: t.tier,
             bounces: 0,
             maxBounces: Math.floor(Math.random() * 2) + 1,
             isAtRest: false,
-            isForeground: isForeground
+            isRolling: false,
+            rollDirection: 0,
+            isForeground: t.isForeground
           });
         }
-      }, wave * 320);
+      }, wave * 180);
     }
 
     this.animate();
 
-    // Comedic pause: girl completely buried by the mound of 100 Doraemons (Spec 27)
+    // After dolls tumble down and the gapless triangular mound is completely formed
     setTimeout(() => {
       if (onBuriedComplete) onBuriedComplete();
-    }, 3800);
+    }, 2600);
+  }
+
+  // Displace 4 to 6 dolls from top apex, rolling and tumbling down both sides as girl emerges
+  rollTopDolls(girlCenterX, girlGroundY) {
+    const cx = girlCenterX !== undefined ? girlCenterX : this.lastGirlCenterX;
+    const gy = girlGroundY !== undefined ? girlGroundY : this.lastGirlGroundY;
+    if (!cx || !gy) return;
+
+    // Filter candidate dolls at the top crest of the mound on the foreground canvas
+    const candidates = this.dolls.filter(d => 
+      d.isForeground && 
+      d.tier >= 5 && 
+      Math.abs(d.x - cx) < 85 &&
+      d.y < (gy - 135)
+    );
+
+    // Sort by y ascending (highest dolls in the pile first)
+    candidates.sort((a, b) => a.y - b.y);
+
+    const rollCount = Math.min(candidates.length, 6);
+    const toRoll = candidates.slice(0, rollCount);
+
+    toRoll.forEach((d, idx) => {
+      // Half roll left, half roll right
+      const isLeft = (idx % 2 === 0);
+      const dir = isLeft ? -1 : 1;
+
+      d.isAtRest = false;
+      d.isRolling = true;
+      d.rollDirection = dir;
+      // Burst outward with lateral momentum and slight upward pop from girl pushing out
+      d.vx = dir * (2.8 + Math.random() * 2.2);
+      d.vy = -(2.2 + Math.random() * 1.6);
+      d.vRot = dir * (0.16 + Math.random() * 0.14);
+      d.gravity = 0.42;
+      d.bounces = 0;
+      d.maxBounces = 2;
+      // Landing level along base / foot of mound
+      d.targetY = gy - 12 - Math.random() * 22;
+    });
   }
 
   animate() {
@@ -229,43 +327,73 @@ class DoraemonPhysicsEngine {
     if (this.bgCtx && this.bgCanvas) this.bgCtx.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
     if (this.fgCtx && this.fgCanvas) this.fgCtx.clearRect(0, 0, this.fgCanvas.width, this.fgCanvas.height);
 
-    let allAtRest = true;
-
     for (let i = 0; i < this.dolls.length; i++) {
       const d = this.dolls[i];
 
       if (!d.isAtRest) {
-        allAtRest = false;
         d.x += d.vx;
         d.y += d.vy;
         d.vy += d.gravity;
+        d.vx *= 0.992; // subtle air drag
         d.rotation += d.vRot;
 
-        // Collision with resting mound level & bouncing
-        if (d.y >= d.targetGround) {
-          d.y = d.targetGround;
-          if (d.bounces < d.maxBounces) {
-            d.vy = -d.vy * 0.42;
-            d.vx *= 0.6;
-            d.vRot *= 0.5;
-            d.bounces++;
-          } else {
-            d.isAtRest = true;
-            d.vy = 0;
-            d.vx = 0;
-            d.vRot = 0;
+        if (d.isRolling) {
+          // Dynamic collision with triangular mound slope
+          const distFromCenter = Math.abs(d.x - this.lastGirlCenterX);
+          // Slope height from peak down to base
+          const slopeY = (this.lastGirlGroundY - 200) + distFromCenter * 0.78;
+
+          if (d.y >= slopeY) {
+            d.y = slopeY;
+            // Tumble and roll along slope
+            if (d.bounces < d.maxBounces && d.y < d.targetY - 14) {
+              d.vy = -Math.abs(d.vy) * 0.28;
+              d.vx *= 0.92;
+              d.vRot = d.rollDirection * (0.12 + Math.random() * 0.1);
+              d.bounces++;
+            } else if (d.y >= d.targetY) {
+              d.y = d.targetY;
+              d.isAtRest = true;
+              d.isRolling = false;
+              d.vy = 0;
+              d.vx = 0;
+              d.vRot = 0;
+            }
+          }
+        } else {
+          // Collision with target resting mound level & soft bounce
+          if (d.y >= d.targetY) {
+            d.y = d.targetY;
+            if (d.bounces < d.maxBounces) {
+              d.vy = -d.vy * 0.32;
+              d.vx *= 0.5;
+              d.vRot *= 0.5;
+              d.bounces++;
+            } else {
+              d.isAtRest = true;
+              d.x = d.targetX;
+              d.y = d.targetY;
+              d.vy = 0;
+              d.vx = 0;
+              d.vRot = 0;
+              d.rotation = d.targetRotation;
+            }
           }
         }
       }
 
-      // Draw onto either background canvas or foreground canvas based on 3D depth layer
+      // Draw onto foreground canvas (in front of girl) or background canvas
       const ctx = d.isForeground ? this.fgCtx : this.bgCtx;
       if (ctx) {
         ctx.save();
         ctx.translate(d.x, d.y);
         ctx.rotate(d.rotation);
-        // Draw transparent offscreen vector sprite (Zero white boxes!)
-        ctx.drawImage(this.spriteCanvas, -d.size / 2, -d.size / 2, d.size, d.size);
+        // Draw 3D collectible Doraemon figure sprite (100% transparent PNG)
+        if (this.imageLoaded && this.doraemonImg) {
+          ctx.drawImage(this.doraemonImg, -d.size / 2, -d.size / 2, d.size, d.size);
+        } else {
+          this.renderVectorDoraemonSprite(ctx, d.size);
+        }
         ctx.restore();
       }
     }

@@ -38,14 +38,14 @@ class BoyCharacter {
     if (this.peekImg) this.peekImg.style.opacity = '1';
     if (this.throwImg) this.throwImg.style.opacity = '0';
     this.puppetWrap.style.transition = 'transform 0.75s cubic-bezier(0.2, 0.8, 0.3, 1)';
-    this.puppetWrap.style.transform = 'translateX(25px)';
+    this.puppetWrap.style.transform = 'translateX(-35px)';
 
     setTimeout(() => {
       // 2. Snap into throw pose
       if (this.peekImg) this.peekImg.style.opacity = '0';
       if (this.throwImg) this.throwImg.style.opacity = '1';
       this.puppetWrap.style.transition = 'transform 0.25s ease-out';
-      this.puppetWrap.style.transform = 'translateX(45px) scale(1.02)';
+      this.puppetWrap.style.transform = 'translateX(-10px) scale(1.02)';
 
       // 3. Launch the bat flying across the screen
       this.launchBat(targetLandingX, onBamSound);
@@ -96,9 +96,9 @@ class BoyCharacter {
       if (progress < 1) {
         requestAnimationFrame(batFlight);
       } else {
-        // Lands beside girl with BAM!
+        // Lands beside girl with BAM! (rests naturally like bat next to boy)
         this.batElement.style.top = `${groundY}px`;
-        this.batElement.style.transform = 'rotate(75deg)';
+        this.batElement.style.transform = 'rotate(18deg)';
         if (onBamSound) onBamSound();
       }
     };

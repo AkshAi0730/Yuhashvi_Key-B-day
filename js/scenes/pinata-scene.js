@@ -19,16 +19,14 @@ class PinataScene {
     this.pinataBody = document.getElementById('pinata-body');
     this.pinataIntactImg = document.getElementById('pinata-img-intact');
     this.pinataCrackedImg = document.getElementById('pinata-img-cracked');
-    this.moundWrap = document.getElementById('mound-overlay-wrap');
-    this.moundFullImg = document.getElementById('mound-img-full');
-    this.girlPeekImg = document.getElementById('girl-img-peek');
-    this.girlRevealImg = document.getElementById('girl-img-reveal');
+    this.goldenArchImg = document.getElementById('golden-birthday-arch');
     this.ropeIndicator = document.getElementById('rope-indicator');
     this.mobileTapBtn = document.getElementById('btn-mobile-tap');
     this.bamEffect = document.getElementById('bam-effect');
     this.speechBubble = document.getElementById('speech-bubble');
     this.birthdayRevealWrap = document.getElementById('birthday-reveal-wrap');
     this.btnContinuePage2 = document.getElementById('btn-continue-page2');
+    this.cameraFrame = document.getElementById('pinata-camera-frame');
 
     // Articulated Character & Physics Subsystems
     this.girl = new window.GirlCharacter('girl-wrap');
@@ -110,6 +108,9 @@ class PinataScene {
     if (this.ropeIndicator) this.ropeIndicator.classList.remove('visible');
     if (this.mobileTapBtn) this.mobileTapBtn.classList.remove('visible');
     if (this.birthdayRevealWrap) this.birthdayRevealWrap.classList.remove('visible');
+    if (this.goldenArchImg) this.goldenArchImg.style.opacity = '0';
+    if (this.cameraFrame) this.cameraFrame.classList.remove('zoom-near');
+    if (this.girl && this.girl.el) this.girl.el.style.opacity = '1';
 
     if (this.pinataIntactImg) {
       this.pinataIntactImg.style.display = 'block';
@@ -119,10 +120,6 @@ class PinataScene {
       this.pinataCrackedImg.style.display = 'none';
       this.pinataCrackedImg.style.opacity = '0';
     }
-    if (this.moundWrap) this.moundWrap.classList.remove('active');
-    if (this.moundFullImg) this.moundFullImg.style.opacity = '0';
-    if (this.girlPeekImg) this.girlPeekImg.style.opacity = '0';
-    if (this.girlRevealImg) this.girlRevealImg.style.opacity = '0';
 
     if (this.pinataRig) {
       this.pinataRig.style.transform = `translateX(-50%) translateY(${this.pinataCurrentY}px)`;
@@ -140,19 +137,20 @@ class PinataScene {
         // 2. Girl stops in center and looks up at the pinata
         setTimeout(() => {
           this.girl.lookUp(() => {
-            // 3. Boy peeks from left, reacts, and throws baseball bat
+            // 3. Boy peeks from left, reacts, and throws baseball bat safely beside girl (Rule #3 & #10)
             setTimeout(() => {
-              this.boy.performThrowSequence(targetCenterX + 60, () => {
+              const safeLandingX = targetCenterX + 115; // Safe separation, NEVER lands on or overlaps girl
+              this.boy.performThrowSequence(safeLandingX, () => {
                 // Comic BAM! sound & visual effect
                 this.app.audio.playBam();
                 if (this.bamEffect) {
-                  this.bamEffect.style.left = `${targetCenterX + 40}px`;
+                  this.bamEffect.style.left = `${safeLandingX - 10}px`;
                   this.bamEffect.style.bottom = '110px';
                   this.bamEffect.classList.add('pop');
                   setTimeout(() => this.bamEffect.classList.remove('pop'), 700);
                 }
               }, () => {
-                // 4. Girl notices bat, bends down, picks it up, stands up
+                // 4. Girl notices bat safely beside her, bends down, picks it up, stands up
                 setTimeout(() => {
                   this.girl.pickUpBat(() => {
                     // 5. Girl tries 3 jumping swings that miss
@@ -250,16 +248,28 @@ class PinataScene {
       this.pinataRig.style.transform = `translateX(-50%) translateY(${this.pinataCurrentY}px)`;
     }
 
-    // Reachable threshold
-    if (this.pinataCurrentY >= 195) {
+    // Reachable threshold: when pinata lowers to hitting height
+    if (this.pinataCurrentY >= 190) {
       if (!this.isReachable) {
         this.isReachable = true;
         if (this.mobileTapBtn) this.mobileTapBtn.classList.add('visible');
+        // Move girl smoothly to stand close beside the piñata without being covered
+        if (this.girl && this.girl.container) {
+          const hitX = window.innerWidth / 2 - 240;
+          this.girl.container.style.transition = 'left 0.45s cubic-bezier(0.2, 0.8, 0.3, 1)';
+          this.girl.container.style.left = `${hitX}px`;
+        }
       }
     } else {
       if (this.isReachable) {
         this.isReachable = false;
         if (this.mobileTapBtn) this.mobileTapBtn.classList.remove('visible');
+        // Return slightly toward center when piñata rises high
+        if (this.girl && this.girl.container) {
+          const normalX = window.innerWidth / 2 - 170;
+          this.girl.container.style.transition = 'left 0.55s ease';
+          this.girl.container.style.left = `${normalX}px`;
+        }
       }
     }
 
@@ -349,9 +359,14 @@ class PinataScene {
     runHitStep();
   }
 
-  // Pinata Shatter & 100 Doraemon Shower Pile Burial
+  // Pinata Shatter & 111 Doraemon Shower Pile Burial (Rule #15 - #19)
   breakPinata() {
     this.isBroken = true;
+    if (this.boy) this.boy.reset();
+    if (this.speechBubble) this.speechBubble.classList.remove('active');
+    if (this.ropeIndicator) this.ropeIndicator.classList.remove('visible');
+    if (this.mobileTapBtn) this.mobileTapBtn.classList.remove('visible');
+
     if (this.pinataRig) {
       this.pinataRig.style.opacity = '0';
       setTimeout(() => {
@@ -364,43 +379,52 @@ class PinataScene {
     const girlCenterX = window.innerWidth / 2;
     const girlGroundY = window.innerHeight - 35;
 
-    // Erupt 100 transparent Doraemon dolls in waves, burying the girl in a 3D mound
+    // Center the girl and switch to figure without the bat in hand
+    if (this.girl && this.girl.container) {
+      this.girl.showPose('stand');
+      this.girl.hasBat = false;
+      if (this.girl.batHand) {
+        this.girl.batHand.style.opacity = '0';
+        this.girl.batHand.style.display = 'none';
+      }
+      this.girl.container.style.transition = 'left 0.35s ease';
+      this.girl.container.style.left = `${girlCenterX - 90}px`;
+    }
+
+    // Erupt exactly 111 3D vinyl Doraemon dolls in waves, accumulating into a dense triangular mound
     this.doraemon.startShower(pinataX, pinataY, girlCenterX, girlGroundY, () => {
-      // Short comedic pause while she is buried (Spec 27)
+      // 1. All figures have landed into the full mound covering the girl completely.
+      // Move camera near before the girl pops out ("page moves near before the girls pops out")
+      if (this.cameraFrame) {
+        this.cameraFrame.classList.add('zoom-near');
+      }
+
+      // 2. Pause while zoomed in close to build anticipation
       setTimeout(() => {
-        // Girl emerges smiling from the Doraemon doll pile! (Spec 28)
-        if (this.girlPeekImg) {
-          this.girlPeekImg.style.opacity = '1';
+        // 3. When girl pops out, a few figures from top roll to either side
+        if (this.doraemon) {
+          this.doraemon.rollTopDolls(girlCenterX, girlGroundY);
         }
-        if (this.moundFullImg) {
-          this.moundFullImg.style.opacity = '0';
+        if (this.girl) {
+          this.girl.peekOutFromPile();
         }
 
-        // Birthday Reveal Arch: "HAPPY BIRTHDAY YUHASVI" (Spec 29)
+        // 4. Transparent Golden Birthday Arch pop-up with confetti celebration!
         setTimeout(() => {
           this.app.audio.playMood('reveal');
           if (window.birthdayParticles) {
+            window.birthdayParticles.triggerConfetti(window.innerWidth / 2, window.innerHeight * 0.32);
             window.birthdayParticles.triggerStarlightBurst();
           }
-          if (this.girlRevealImg) {
-            this.girlRevealImg.style.opacity = '1';
-          }
-          if (this.girlPeekImg) {
-            this.girlPeekImg.style.opacity = '0';
+          if (this.goldenArchImg) {
+            this.goldenArchImg.style.opacity = '1';
           }
           if (this.birthdayRevealWrap) {
             this.birthdayRevealWrap.classList.add('visible');
           }
-        }, 1200);
-      }, 1200);
+        }, 850);
+      }, 1050);
     });
-
-    // Fade in 3D Doraemon Mound as dolls cascade down
-    setTimeout(() => {
-      if (this.moundWrap) this.moundWrap.classList.add('active');
-      if (this.moundFullImg) this.moundFullImg.style.opacity = '1';
-      if (this.girl) this.girl.showPose('none');
-    }, 1600);
   }
 }
 

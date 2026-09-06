@@ -31,25 +31,13 @@ class GirlCharacter {
         <!-- Ground Contact Shadow -->
         <div class="girl-contact-shadow"></div>
 
-        <!-- Main Body Wrapper (Transparent Reference Model) -->
+        <!-- Main Body Wrapper (Authentic Standing Figure with zero bat) -->
         <div class="girl-torso-wrap">
           <img src="assets/characters/girl_standing.png" class="girl-char-img girl-img-stand" alt="Yuhashvi Standing" />
-          <img src="assets/characters/girl_bat_stance.png" class="girl-char-img girl-img-bat" alt="Yuhashvi Bat Stance" style="display: none; opacity: 0;" />
-          <img src="assets/characters/girl_swing_hit.png" class="girl-char-img girl-img-hit" alt="Yuhashvi Hit Swing" style="display: none; opacity: 0;" />
           
-          <!-- Articulated Right Hand Bat Prop (fallback/prop) -->
-          <div class="girl-bat-hand">
-            <svg viewBox="0 0 60 120" width="48" height="96" class="bat-svg-prop">
-              <defs>
-                <linearGradient id="bat-wood" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#b8784a" />
-                  <stop offset="50%" stop-color="#e3a778" />
-                  <stop offset="100%" stop-color="#8c5127" />
-                </linearGradient>
-              </defs>
-              <path d="M26,115 L26,95 C25,80 18,30 18,12 C18,4 32,4 32,12 C32,30 29,80 28,95 L28,115 Z" fill="url(#bat-wood)" stroke="#5e3415" stroke-width="1.5" />
-              <rect x="24" y="96" width="6" height="18" rx="2" fill="#fff6ee" stroke="#d5beaf" stroke-width="0.8" />
-            </svg>
+          <!-- Articulated Bat Hand (holding authentic 3D wooden baseball bat) -->
+          <div class="girl-bat-hand" id="girl-bat-hand">
+            <img src="assets/images/wooden_baseball_bat.png" class="girl-bat-img" alt="Wooden Baseball Bat" />
           </div>
 
           <!-- Gentle Breath Particle Emitter for Candle Blow -->
@@ -61,23 +49,17 @@ class GirlCharacter {
     this.puppet = this.container.querySelector('.girl-puppet');
     this.torso = this.container.querySelector('.girl-torso-wrap');
     this.standImg = this.container.querySelector('.girl-img-stand');
-    this.batImg = this.container.querySelector('.girl-img-bat');
-    this.hitImg = this.container.querySelector('.girl-img-hit');
     this.batHand = this.container.querySelector('.girl-bat-hand');
+    this.batImg = this.container.querySelector('.girl-bat-img');
     this.shadow = this.container.querySelector('.girl-contact-shadow');
     this.breathStream = this.container.querySelector('.girl-breath-stream');
   }
 
   showPose(pose) {
-    if (!this.standImg || !this.batImg || !this.hitImg) return;
-    this.standImg.style.display = (pose === 'stand') ? 'block' : 'none';
-    this.standImg.style.opacity = (pose === 'stand') ? '1' : '0';
-
-    this.batImg.style.display = (pose === 'bat') ? 'block' : 'none';
-    this.batImg.style.opacity = (pose === 'bat') ? '1' : '0';
-
-    this.hitImg.style.display = (pose === 'hit') ? 'block' : 'none';
-    this.hitImg.style.opacity = (pose === 'hit') ? '1' : '0';
+    if (this.standImg) {
+      this.standImg.style.display = 'block';
+      this.standImg.style.opacity = '1';
+    }
   }
 
   // Idle Animation: subtle natural breathing, gentle floating hair motion, weight shifting
@@ -183,6 +165,13 @@ class GirlCharacter {
         batGroundProp.style.opacity = '0';
       }
 
+      // Display authentic 3D wooden bat in girl's hand
+      if (this.batHand) {
+        this.batHand.style.display = 'block';
+        this.batHand.style.opacity = '1';
+        this.batHand.style.transform = 'rotate(-35deg)';
+      }
+
       this.showPose('bat');
 
       if (this.torso) {
@@ -202,7 +191,7 @@ class GirlCharacter {
     this.state = 'JUMP_SWING';
     if (this.idleAnimId) cancelAnimationFrame(this.idleAnimId);
 
-    // 1. Crouch anticipation
+    // 1. Crouch anticipation (coil bat back)
     if (this.torso) {
       this.torso.style.transition = 'transform 0.22s ease-in';
       this.torso.style.transform = 'translateY(26px) scaleY(0.88)';
@@ -210,9 +199,13 @@ class GirlCharacter {
     if (this.shadow) {
       this.shadow.style.transform = 'scale(1.25)';
     }
+    if (this.batHand && this.hasBat) {
+      this.batHand.style.transition = 'transform 0.22s ease-in';
+      this.batHand.style.transform = 'rotate(-55deg)';
+    }
 
     setTimeout(() => {
-      // 2. Spring up to apex
+      // 2. Spring up to apex & powerful swing
       if (this.torso) {
         this.torso.style.transition = `transform 0.38s cubic-bezier(0.2, 0.8, 0.3, 1)`;
         this.torso.style.transform = `translateY(-${jumpHeightPx}px) scaleY(1.08)`;
@@ -222,19 +215,20 @@ class GirlCharacter {
         this.shadow.style.transform = 'scale(0.55)';
         this.shadow.style.opacity = '0.35';
       }
+      if (this.batHand && this.hasBat) {
+        this.batHand.style.transition = 'transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
+        this.batHand.style.transform = 'rotate(58deg) scale(1.08)';
+      }
 
       // 3. Apex swing & contact
       setTimeout(() => {
-        if (isReachable) {
-          this.showPose('hit');
+        if (this.torso) {
+          this.torso.style.transform = `translateY(-${jumpHeightPx + 10}px) rotate(12deg) scaleY(1.05)`;
         }
         if (onApex) onApex();
 
         // 4. Descend & Land with impact cushion
         setTimeout(() => {
-          if (isReachable) {
-            this.showPose('bat');
-          }
           if (this.torso) {
             this.torso.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.8, 0.5)';
             this.torso.style.transform = 'translateY(14px) scaleY(0.92)';
@@ -243,6 +237,10 @@ class GirlCharacter {
             this.shadow.style.transition = 'transform 0.3s ease-in, opacity 0.3s ease';
             this.shadow.style.transform = 'scale(1.15)';
             this.shadow.style.opacity = '0.8';
+          }
+          if (this.batHand && this.hasBat) {
+            this.batHand.style.transition = 'transform 0.3s ease';
+            this.batHand.style.transform = 'rotate(-35deg) scale(1)';
           }
 
           // 5. Recovery to stance
@@ -253,6 +251,9 @@ class GirlCharacter {
             }
             if (this.shadow) {
               this.shadow.style.transform = 'scale(1)';
+            }
+            if (this.batHand && this.hasBat) {
+              this.batHand.style.transform = 'rotate(-35deg)';
             }
             this.startIdle();
             if (onComplete) onComplete();
@@ -279,13 +280,20 @@ class GirlCharacter {
     }, 350);
   }
 
-  // Girl peeking out from the Doraemon pile (Specs 28 & 39)
+  // Girl peeking out from the Doraemon pile without the bat in hand
   peekOutFromPile(onComplete) {
     this.state = 'PEEK_OUT';
+    this.hasBat = false;
+    this.showPose('stand'); // Always switch to pose without bat in hand
+    if (this.batHand) {
+      this.batHand.style.opacity = '0';
+      this.batHand.style.display = 'none';
+      this.batHand.style.transform = 'rotate(-35deg)';
+    }
     if (this.container) {
       this.container.style.transition = 'transform 1.1s cubic-bezier(0.2, 0.8, 0.3, 1)';
-      // Head peeks up out of the doll pile
-      this.container.style.transform = 'translateY(-55px)';
+      // Head and smiling face peek up prominently above the doll pile
+      this.container.style.transform = 'translateY(-145px)';
     }
     // Looks left
     setTimeout(() => {
@@ -336,7 +344,8 @@ class GirlCharacter {
     this.showPose('stand');
     if (this.batHand) {
       this.batHand.style.opacity = '0';
-      this.batHand.style.transform = 'rotate(0deg)';
+      this.batHand.style.display = 'none';
+      this.batHand.style.transform = 'rotate(-35deg)';
     }
     if (this.container) {
       this.container.style.left = this.defaultLeft;

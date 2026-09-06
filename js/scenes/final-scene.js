@@ -1,16 +1,12 @@
 /**
  * ============================================================================
  * FINAL BIRTHDAY SCENE ENGINE (js/scenes/final-scene.js)
- * - Same reference GirlCharacter beside birthday cake
- * - Cake with "21" and naturally flickering animated candle flame
- * - Sequence: "Happy Birthday", "Yuhashvi ♡", [ADD FINAL MESSAGE]
- * - "One Last Thing":
- *   1. Girl animates gentle blowing motion with breath stream
- *   2. Candle flame reacts, shrinks, and extinguishes with rising smoke
- *   3. Scene darkens momentarily
- *   4. Hundreds of starlight sparkles ignite across the night sky
- *   5. "Keep smiling. ♡"
- *   6. "↻ Experience Again" resets all state and returns to Page 1
+ * Master Photographic Crossfade & Realistic Candle Extinguish
+ * - Layer 1: final_night_lit.jpg (Lit candles, night garden, table, cake, girl)
+ * - Layer 2: final_night_stars.jpg (Extinguished, shooting stars, midnight)
+ * - Breath stream -> Flame extinguishes -> Smoke wisp -> Smooth photo crossfade
+ * - Final message card with [ADD FINAL MESSAGE] and "Keep smiling. ♡"
+ * - "↻ Experience Again" resets all state cleanly back to Page 1
  * ============================================================================
  */
 
@@ -18,17 +14,20 @@ class FinalScene {
   constructor(app) {
     this.app = app;
     this.el = document.getElementById('scene-final');
+    this.litLayer = document.getElementById('final-photo-layer-lit');
+    this.starsLayer = document.getElementById('final-photo-layer-stars');
+    this.candleFlame1 = document.getElementById('candle-flame-left');
+    this.candleFlame2 = document.getElementById('candle-flame-right');
+    this.smokeWisps = document.getElementById('candle-smoke-wisps');
+    this.btnBlow = document.getElementById('btn-one-last-thing');
+    this.messageCard = document.getElementById('final-message-card');
     this.title1El = document.getElementById('final-title-1');
     this.title2El = document.getElementById('final-title-2');
     this.messageEl = document.getElementById('final-message');
-    this.btnOneLastThing = document.getElementById('btn-one-last-thing');
     this.smilingTextEl = document.getElementById('final-smiling-text');
     this.btnExperienceAgain = document.getElementById('btn-experience-again');
-    this.candleFlame = document.getElementById('cake-candle-flame');
-    this.smokeWisp = document.getElementById('cake-smoke-wisp');
 
-    // Instance of the same GirlCharacter for character consistency
-    this.girl = new window.GirlCharacter('final-girl-wrap');
+    this.isBlown = false;
 
     this.init();
   }
@@ -39,15 +38,16 @@ class FinalScene {
       if (this.title1El) this.title1El.textContent = cfg.titleLine1;
       if (this.title2El) this.title2El.textContent = cfg.titleLine2;
       if (this.messageEl) this.messageEl.textContent = cfg.finalMessage;
-      if (this.btnOneLastThing) {
-        this.btnOneLastThing.innerHTML = `<span>✨</span> ${cfg.btnOneLastThing}`;
-        this.btnOneLastThing.addEventListener('click', () => this.executeCandleBlow());
+      if (this.btnBlow) {
+        this.btnBlow.innerHTML = `<span>✨</span> ${cfg.btnOneLastThing || 'Blow the Candles & Make a Wish'}`;
+        this.btnBlow.addEventListener('click', () => this.executeCandleBlow());
       }
       if (this.smilingTextEl) {
-        this.smilingTextEl.textContent = cfg.keepSmilingText;
+        this.smilingTextEl.textContent = cfg.keepSmilingText || 'Keep smiling. ♡';
       }
       if (this.btnExperienceAgain) {
-        this.btnExperienceAgain.innerHTML = `${cfg.btnExperienceAgain}`;
+        const replayText = (cfg.btnExperienceAgain || 'Experience Again').replace(/^[↻\s]+/, '');
+        this.btnExperienceAgain.innerHTML = `<span>↻</span> ${replayText}`;
         this.btnExperienceAgain.addEventListener('click', () => {
           this.app.resetAllAndGoToOpening();
         });
@@ -56,65 +56,78 @@ class FinalScene {
   }
 
   enter() {
-    if (this.el) this.el.classList.remove('blown-out');
-    if (this.candleFlame) {
-      this.candleFlame.style.display = 'block';
-      this.candleFlame.style.opacity = '1';
-      this.candleFlame.style.transform = 'scale(1)';
-    }
-    if (this.smokeWisp) {
-      this.smokeWisp.style.opacity = '0';
-    }
-    if (this.btnOneLastThing) this.btnOneLastThing.style.display = 'inline-flex';
-    if (this.smilingTextEl) this.smilingTextEl.style.display = 'none';
-    if (this.btnExperienceAgain) this.btnExperienceAgain.style.display = 'none';
-
-    if (this.girl) {
-      this.girl.reset();
-      this.girl.container.style.left = '40px'; // Standing beside cake
+    this.resetScene();
+    if (window.birthdayParticles) {
+      window.birthdayParticles.setMode('ambient');
     }
   }
 
-  leave() {
-    if (this.el) this.el.classList.remove('blown-out');
+  leave() {}
+
+  resetScene() {
+    this.isBlown = false;
+    if (this.starsLayer) {
+      this.starsLayer.style.opacity = '0';
+    }
+    if (this.candleFlame1) {
+      this.candleFlame1.classList.remove('extinguished');
+    }
+    if (this.candleFlame2) {
+      this.candleFlame2.classList.remove('extinguished');
+    }
+    if (this.smokeWisps) {
+      this.smokeWisps.classList.remove('active');
+    }
+    if (this.btnBlow) {
+      this.btnBlow.style.display = 'inline-flex';
+      this.btnBlow.style.opacity = '1';
+    }
+    if (this.messageCard) {
+      this.messageCard.style.display = 'none';
+      this.messageCard.style.opacity = '0';
+    }
   }
 
   executeCandleBlow() {
-    if (this.btnOneLastThing) this.btnOneLastThing.style.display = 'none';
+    if (this.isBlown) return;
+    this.isBlown = true;
 
-    // 1. Girl animates blowing toward the candle (Specs 42 & 54)
-    this.app.audio.playCandleBlow();
-    this.girl.blowCandle(() => {
-      // 2. Flame reacts to breath stream: bends, flickers, shrinks
-      if (this.candleFlame) {
-        this.candleFlame.style.transition = 'transform 0.35s ease, opacity 0.35s ease';
-        this.candleFlame.style.transform = 'rotate(-35deg) scale(0.4)';
-        this.candleFlame.style.opacity = '0';
-      }
-
-      // 3. Smoke wisp curls upward
-      if (this.smokeWisp) {
-        this.smokeWisp.style.transition = 'opacity 0.5s ease, transform 1.2s ease-out';
-        this.smokeWisp.style.opacity = '0.75';
-        this.smokeWisp.style.transform = 'translateY(-30px) scale(1.3)';
-      }
-
-      // 4. Room darkens slightly
+    // 1. Fade out prompt button
+    if (this.btnBlow) {
+      this.btnBlow.style.transition = 'opacity 0.4s ease';
+      this.btnBlow.style.opacity = '0';
       setTimeout(() => {
-        if (this.el) this.el.classList.add('blown-out');
+        this.btnBlow.style.display = 'none';
+      }, 400);
+    }
 
-        // 5. Hundreds of magical starlight sparkles ignite across the sky!
-        if (window.birthdayParticles) {
-          window.birthdayParticles.triggerStarlightBurst();
+    // 2. Play gentle breath / blow sound
+    this.app.audio.playCandleBlow();
+
+    // 3. Extinguish candle flames & rise smoke curls
+    setTimeout(() => {
+      if (this.candleFlame1) this.candleFlame1.classList.add('extinguished');
+      if (this.candleFlame2) this.candleFlame2.classList.add('extinguished');
+      if (this.smokeWisps) this.smokeWisps.classList.add('active');
+
+      // 4. Smoothly crossfade from lit night scene to starry celestial shooting star sky
+      setTimeout(() => {
+        if (this.starsLayer) {
+          this.starsLayer.style.opacity = '1';
         }
 
-        // 6. "Keep smiling. ♡" and "↻ Experience Again"
+        // 5. Clean, elegant photographic crossfade with unlit wicks and smoke wisps (no shooting stars/particles)
+
+        // 6. Reveal celebratory message card with [ADD FINAL MESSAGE], "Keep smiling. ♡", and replay button
         setTimeout(() => {
-          if (this.smilingTextEl) this.smilingTextEl.style.display = 'block';
-          if (this.btnExperienceAgain) this.btnExperienceAgain.style.display = 'inline-flex';
-        }, 1200);
-      }, 400);
-    });
+          if (this.messageCard) {
+            this.messageCard.style.display = 'block';
+            this.messageCard.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+            this.messageCard.style.opacity = '1';
+          }
+        }, 1400);
+      }, 350);
+    }, 450);
   }
 }
 

@@ -202,31 +202,125 @@ class ParticleSystem {
       if (!s.active) continue;
 
       s.trail.unshift({ x: s.x, y: s.y });
-      if (s.trail.length > 20) s.trail.pop();
+      if (s.trail.length > 28) s.trail.pop();
 
       s.x += s.vx;
       s.y += s.vy;
 
       this.ctx.save();
-      this.ctx.beginPath();
-      this.ctx.moveTo(s.x, s.y);
-      for (let j = 0; j < s.trail.length; j++) {
-        const pt = s.trail[j];
-        this.ctx.lineTo(pt.x, pt.y);
+
+      // 4 Glowing warm orange/peach tail streams (Rule #12)
+      // Stream 1: Primary wide solid tail
+      if (s.trail.length > 1) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(s.x, s.y);
+        for (let j = 0; j < s.trail.length; j++) {
+          const pt = s.trail[j];
+          this.ctx.lineTo(pt.x, pt.y);
+        }
+        const grad = this.ctx.createLinearGradient(s.x - 180, s.y - 20, s.x, s.y);
+        grad.addColorStop(0, 'rgba(255, 180, 140, 0)');
+        grad.addColorStop(0.6, 'rgba(255, 140, 90, 0.45)');
+        grad.addColorStop(1, 'rgba(255, 235, 180, 0.9)');
+        this.ctx.strokeStyle = grad;
+        this.ctx.lineWidth = 14;
+        this.ctx.lineCap = 'round';
+        this.ctx.shadowColor = '#ffa550';
+        this.ctx.shadowBlur = 18;
+        this.ctx.stroke();
+
+        // Stream 2: Dashed secondary tail
+        this.ctx.save();
+        this.ctx.setLineDash([10, 8]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(s.x - 5, s.y - 10);
+        for (let j = 0; j < s.trail.length; j++) {
+          const pt = s.trail[j];
+          this.ctx.lineTo(pt.x - 8, pt.y - 12);
+        }
+        this.ctx.strokeStyle = 'rgba(255, 215, 160, 0.7)';
+        this.ctx.lineWidth = 4;
+        this.ctx.stroke();
+        this.ctx.restore();
+
+        // Stream 3: Lower accent tail
+        this.ctx.beginPath();
+        this.ctx.moveTo(s.x - 4, s.y + 8);
+        for (let j = 0; j < s.trail.length; j++) {
+          const pt = s.trail[j];
+          this.ctx.lineTo(pt.x - 6, pt.y + 10);
+        }
+        this.ctx.strokeStyle = 'rgba(255, 160, 130, 0.5)';
+        this.ctx.lineWidth = 3;
+        this.ctx.stroke();
+
+        // Stream 4: Sparkling dots & plus signs along trail
+        for (let j = 3; j < s.trail.length; j += 4) {
+          const pt = s.trail[j];
+          const glintOffset = (j % 2 === 0 ? 12 : -12);
+          this.ctx.fillStyle = 'rgba(255, 250, 210, 0.85)';
+          // Little plus sign (+)
+          this.ctx.fillRect(pt.x + glintOffset - 3, pt.y - 1, 7, 2);
+          this.ctx.fillRect(pt.x + glintOffset - 1, pt.y - 3, 2, 7);
+        }
       }
-      this.ctx.strokeStyle = 'rgba(255, 240, 200, 0.85)';
-      this.ctx.lineWidth = 3;
-      this.ctx.shadowColor = '#fff';
-      this.ctx.shadowBlur = 12;
+
+      // Large 5-Pointed Cute Vector Chibi Star Head (Rule #12)
+      this.ctx.translate(s.x, s.y);
+      this.ctx.rotate(s.x * 0.03);
+
+      // Warm orange-gold halo
+      const haloGrad = this.ctx.createRadialGradient(0, 0, 8, 0, 0, 36);
+      haloGrad.addColorStop(0, 'rgba(255, 240, 180, 0.8)');
+      haloGrad.addColorStop(0.5, 'rgba(255, 170, 90, 0.4)');
+      haloGrad.addColorStop(1, 'rgba(255, 150, 80, 0)');
+      this.ctx.fillStyle = haloGrad;
+      this.ctx.beginPath();
+      this.ctx.arc(0, 0, 36, 0, Math.PI * 2);
+      this.ctx.fill();
+
+      // Bold outline and soft cream/peach star body
+      const starR_outer = 22;
+      const starR_inner = 11;
+      this.ctx.beginPath();
+      for (let p = 0; p < 10; p++) {
+        const r = (p % 2 === 0) ? starR_outer : starR_inner;
+        const angle = (p * Math.PI) / 5 - Math.PI / 2;
+        const px = Math.cos(angle) * r;
+        const py = Math.sin(angle) * r;
+        if (p === 0) this.ctx.moveTo(px, py);
+        else this.ctx.lineTo(px, py);
+      }
+      this.ctx.closePath();
+
+      // Bold outline
+      this.ctx.strokeStyle = '#2d1808';
+      this.ctx.lineWidth = 3.5;
       this.ctx.stroke();
 
-      this.ctx.fillStyle = '#ffffff';
-      this.ctx.beginPath();
-      this.ctx.arc(s.x, s.y, 4.5, 0, Math.PI * 2);
+      // Gradient star fill: warm yellow-orange core to pastel peach-pink
+      const starGrad = this.ctx.createRadialGradient(-3, -3, 2, 0, 0, 20);
+      starGrad.addColorStop(0, '#fffbf0');
+      starGrad.addColorStop(0.35, '#ffd275');
+      starGrad.addColorStop(0.75, '#ff9e6d');
+      starGrad.addColorStop(1, '#ff809b');
+      this.ctx.fillStyle = starGrad;
       this.ctx.fill();
+
+      // Pearlescent liquid sheen catchlight
+      this.ctx.beginPath();
+      this.ctx.ellipse(-5, -6, 5, 2.5, -0.6, 0, Math.PI * 2);
+      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      this.ctx.fill();
+
+      // Cross-shaped glint at tip
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.fillRect(8, -8, 8, 2);
+      this.ctx.fillRect(11, -11, 2, 8);
+
       this.ctx.restore();
 
-      if (s.x > this.canvas.width + 60) {
+      if (s.x > this.canvas.width + 120) {
         s.active = false;
         if (s.onComplete) s.onComplete();
         this.shootingStars.splice(i, 1);

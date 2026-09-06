@@ -46,6 +46,7 @@ class BirthdayApp {
     this.scenes['pinata'] = new window.PinataScene(this);
     this.scenes['page2'] = new window.Page2EnvelopeScene(this);
     this.scenes['gallery'] = new window.PhotoGalleryScene(this);
+    this.scenes['gate'] = new window.GateScene(this);
     this.scenes['final'] = new window.FinalScene(this);
 
     // Mount initial scene: Page 1

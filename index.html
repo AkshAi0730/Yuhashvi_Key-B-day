@@ -77,62 +77,56 @@
          - Peeking reveal & "Happy Birthday Yuhashvi ♡"
          ==================================================================== -->
     <section id="scene-pinata" class="scene">
-      <!-- 3D Doraemon Mound Layer: Background (Behind Girl) -->
-      <canvas id="doraemon-bg-canvas"></canvas>
+      <!-- Camera Zoom Frame (Dolly zoom near mound) -->
+      <div id="pinata-camera-frame" class="pinata-camera-frame">
+        <!-- 3D Doraemon Mound Layer: Background (Behind Girl) -->
+        <canvas id="doraemon-bg-canvas"></canvas>
 
-      <!-- Inverted Spring Pinata Rig -->
-      <div id="pinata-rig" class="pinata-rig">
-        <div class="pinata-rope"></div>
-        <div id="pinata-body" class="pinata-body-wrap" title="Click or touch to swing!">
-          <img id="pinata-img-intact" src="assets/images/pinata_star_intact.png" alt="Piñata" class="pinata-render-img" />
-          <img id="pinata-img-cracked" src="assets/images/pinata_star_cracked.png" alt="Cracked Piñata" class="pinata-render-img pinata-cracked" />
+        <!-- Inverted Spring Pinata Rig -->
+        <div id="pinata-rig" class="pinata-rig">
+          <div class="pinata-rope"></div>
+          <div id="pinata-body" class="pinata-body-wrap" title="Click or touch to swing!">
+            <img id="pinata-img-intact" src="assets/images/pinata_star_intact.png" alt="Piñata" class="pinata-render-img" />
+            <img id="pinata-img-cracked" src="assets/images/pinata_star_cracked.png" alt="Cracked Piñata" class="pinata-render-img pinata-cracked" />
+          </div>
+        </div>
+
+        <!-- Right Handle Height Indicator -->
+        <div id="rope-indicator" class="rope-indicator-handle">
+          <div style="font-size: 24px;">↕️</div>
+          <div class="rope-indicator-text">Help her reach it! Move up & down</div>
+        </div>
+
+        <!-- Comic Pop Effect & Speech Bubble -->
+        <div id="bam-effect" class="comic-bam-effect">BAM!</div>
+        <div id="speech-bubble" class="speech-bubble">Help me! 🥺</div>
+
+        <!-- Ground Stage for Articulated Characters -->
+        <div class="characters-stage">
+          <!-- Boy Character Container -->
+          <div id="boy-wrap" class="boy-peeking-wrap"></div>
+
+          <!-- Flying Baseball Bat Prop (Authentic 3D wooden bat from boy peeking figure) -->
+          <div id="bat-prop" class="bat-prop">
+            <img src="assets/images/wooden_baseball_bat.png" class="flying-bat-img" alt="Wooden Baseball Bat" />
+          </div>
+
+          <!-- Girl Character Puppet Container (Reference Model) -->
+          <div id="girl-wrap" class="girl-sprite-wrap"></div>
+        </div>
+
+        <!-- 3D Doraemon Mound Layer: Foreground (In Front of Girl) -->
+        <canvas id="doraemon-fg-canvas"></canvas>
+
+        <!-- Mobile Tap Prompt -->
+        <div id="btn-mobile-tap" class="mobile-tap-prompt">
+          <button class="btn-story btn-primary">🎯 Tap to Hit Piñata!</button>
         </div>
       </div>
 
-      <!-- Right Handle Height Indicator -->
-      <div id="rope-indicator" class="rope-indicator-handle">
-        <div style="font-size: 24px;">↕️</div>
-        <div class="rope-indicator-text">Help her reach it! Move up & down</div>
-      </div>
-
-      <!-- Comic Pop Effect & Speech Bubble -->
-      <div id="bam-effect" class="comic-bam-effect">BAM!</div>
-      <div id="speech-bubble" class="speech-bubble">Help me! 🥺</div>
-
-      <!-- Ground Stage for Articulated Characters -->
-      <div class="characters-stage">
-        <!-- Boy Character Container -->
-        <div id="boy-wrap" class="boy-peeking-wrap"></div>
-
-        <!-- Flying Baseball Bat Prop -->
-        <div id="bat-prop" class="bat-prop">
-          <svg viewBox="0 0 60 120" width="100%" height="100%">
-            <path d="M26,115 L26,95 C25,80 18,30 18,12 C18,4 32,4 32,12 C32,30 29,80 28,95 L28,115 Z" fill="#c07e4d" stroke="#60371a" stroke-width="2" />
-            <rect x="24" y="96" width="6" height="18" rx="2" fill="#fff5ee" />
-          </svg>
-        </div>
-
-        <!-- Girl Character Puppet Container (Reference Model) -->
-        <div id="girl-wrap" class="girl-sprite-wrap"></div>
-
-        <!-- Full 3D Doraemon Mound & Peek Reveal Layer -->
-        <div id="mound-overlay-wrap" class="mound-overlay-wrap">
-          <img id="mound-img-full" src="assets/images/doraemon_mound_full.png" alt="Doraemon Mound" class="mound-overlay-img" />
-          <img id="girl-img-peek" src="assets/images/girl_peek_pile.png" alt="Girl emerging smiling" class="mound-overlay-img girl-peek-img" />
-          <img id="girl-img-reveal" src="assets/images/girl_birthday_reveal.png" alt="Birthday Reveal Arch" class="mound-overlay-img girl-reveal-arch-img" />
-        </div>
-      </div>
-
-      <!-- 3D Doraemon Mound Layer: Foreground (In Front of Girl) -->
-      <canvas id="doraemon-fg-canvas"></canvas>
-
-      <!-- Mobile Tap Prompt -->
-      <div id="btn-mobile-tap" class="mobile-tap-prompt">
-        <button class="btn-story btn-primary">🎯 Tap to Hit Piñata!</button>
-      </div>
-
-      <!-- Birthday Reveal Overlay -->
+      <!-- Birthday Reveal Overlay with Floating Golden Arch -->
       <div id="birthday-reveal-wrap" class="birthday-reveal-wrap">
+        <img src="assets/images/golden_birthday_arch.png" id="golden-birthday-arch" class="golden-birthday-arch-img" alt="Happy Birthday Yuhasvi" />
         <button id="btn-continue-page2" class="btn-story btn-primary">
           <span>💌</span> I have something for you
         </button>
@@ -140,21 +134,23 @@
     </section>
 
     <!-- ====================================================================
-         SCENE 4: PAGE 2 & ENVELOPE
-         - Calmer pastel scene
-         - Shaking envelope -> Flap opens -> Letter rises -> Typewriter reveal
+         SCENE 4: PAGE 2 & LUXURY SCALLOPED ENVELOPE
+         - Scalloped flap with golden flower wax seal & burgundy ribbon/tassels
+         - 3D flap opening -> Letter rises -> Typewriter reveal
          ==================================================================== -->
     <section id="scene-page2" class="scene">
       <div class="envelope-screen-container">
         <h2 id="page2-intro-title" class="page2-intro-title">Since today is your special day...</h2>
         <p id="page2-intro-desc" class="page2-intro-desc"></p>
 
-        <!-- Interactive Envelope -->
+        <!-- Luxury Interactive Envelope (media_1788702778120.jpg) -->
         <div id="envelope-wrap" class="envelope-interactive-wrap" title="Click to open your envelope">
-          <div class="envelope-base">
-            <div class="envelope-label-badge">For Yuhashvi ♡</div>
+          <div class="envelope-v2-card">
+            <img src="assets/images/envelope_v2_full.png" class="envelope-v2-img" alt="Luxury Birthday Envelope" />
+            <div id="envelope-seal-touch" class="envelope-seal-touch" title="Tap the golden wax seal!">
+              <div class="seal-prompt-pill">✨ Tap seal to open ✨</div>
+            </div>
           </div>
-          <div id="envelope-flap" class="envelope-flap"></div>
           <div id="letter-paper" class="letter-paper">
             <div id="letter-text-content" class="letter-text-content"></div>
           </div>
@@ -170,9 +166,10 @@
     </section>
 
     <!-- ====================================================================
-         SCENE 5: PHOTO GALLERY & SECRET DORAEMON
-         - Polaroid scrapbook cards
-         - Hidden Doraemon easter egg -> Gift box -> Confetti
+         SCENE 5: PHOTO GALLERY & NOBITA CHASE (Replaces hidden Doraemon)
+         - 4 Polaroid cards of Yuhashvi (her pictures)
+         - Chibi Nobita running along lower safe lane with "Catch me"
+         - Generous tap hitbox -> Hands over Golden Heart Key
          ==================================================================== -->
     <section id="scene-gallery" class="scene">
       <div class="gallery-container">
@@ -180,23 +177,40 @@
           A few pictures of someone who deserves a beautiful day ♡
         </h2>
         <div id="polaroid-grid" class="polaroid-grid"></div>
-        <button id="btn-one-more-surprise" class="btn-story btn-primary">
-          <span>✨</span> One More Surprise
-        </button>
+
+        <!-- Nobita Key Handoff Progression Prompt -->
+        <div id="gallery-progress-wrap" class="gallery-progress-wrap">
+          <button id="btn-proceed-gate" class="btn-story btn-primary" style="display: none;">
+            <span>✨</span> Approach the Golden Gate
+          </button>
+        </div>
       </div>
 
-      <!-- Secret Doraemon Gift Modal -->
-      <div id="secret-popup-modal" class="secret-popup-modal">
-        <div id="secret-popup-card" class="secret-popup-card">
-          <img src="assets/images/doraemon_mini.jpg" class="secret-char-avatar" alt="Doraemon" />
-          <h3 id="secret-hint-text" class="secret-hint-text">Psst... I have one more thing for you! 👀</h3>
-          <img src="assets/images/gift_box.jpg" id="secret-gift-box-img" class="secret-gift-box-img" alt="Gift Box" title="Click to open!" />
-          <div>
-            <button id="btn-open-gift" class="btn-story btn-primary">
-              <span>🎁</span> Open
+      <!-- Lower Safe Lane: Running Chibi Nobita with Generous Hitbox (Tightly grouped) -->
+      <div id="nobita-chase-container" class="nobita-chase-container" title="Catch Nobita!">
+        <div class="nobita-single-unit">
+          <div id="nobita-speech-bubble" class="nobita-speech-bubble">Catch me! 🏃‍♂️</div>
+          <div id="nobita-hitbox" class="nobita-hitbox">
+            <img src="assets/characters/nobita_runner.png" id="nobita-runner-img" class="nobita-runner-img" alt="Nobita" />
+            <img src="assets/images/golden_heart_key.png" id="nobita-golden-key" class="nobita-golden-key" alt="Golden Heart Key" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Golden Key Handoff Choice Modal (Floats to middle on Catch) -->
+      <div id="gallery-key-modal" class="gallery-key-modal">
+        <div class="key-modal-card">
+          <div id="floating-center-key" class="floating-center-key">
+            <img src="assets/images/golden_heart_key.png" alt="Golden Heart Key" />
+          </div>
+          <h3 class="key-modal-title">You've Unlocked the Golden Heart Key! ✨</h3>
+          <p class="key-modal-desc">This sacred key unlocks the Baroque Golden Gate ahead.</p>
+          <div class="key-modal-actions">
+            <button id="btn-gate-immediate" class="btn-story btn-primary">
+              <span>✨</span> Approach the Gate Immediately
             </button>
-            <button id="btn-continue-final" class="btn-story" style="display: none;">
-              <span>🌟</span> Continue
+            <button id="btn-stay-gallery" class="btn-story btn-secondary">
+              <span>🌸</span> Let's stay here a little more
             </button>
           </div>
         </div>
@@ -204,85 +218,80 @@
     </section>
 
     <!-- ====================================================================
-         SCENE 6: FINAL NIGHT SCENE & CANDLE BLOW
-         - Peaceful nighttime environment with moon & stars
-         - Same girl beside cake with "21" candle
-         - Animated candle blow with breath stream & flame extinguishing
-         - "Keep smiling. ♡" and Experience Again loop
+         SCENE 6: BAROQUE GOLDEN GATE & HEART PADLOCK (Specs 26 - 30)
+         - Baroque Golden Gate with stone pillars & lanterns
+         - Centered ornate Heart Padlock: "tap me to unlock"
+         - Key inserts, turns 90°, lock releases & drops open
+         - Both full-height gate panels physically swing open in 3D perspective
+         ==================================================================== -->
+    <section id="scene-gate" class="scene">
+      <!-- Heavenly Glow Background -->
+      <div class="gate-heavenly-backdrop"></div>
+
+      <!-- Baroque Golden Gate Structure: Full-Height Doors incorporating Top Arch -->
+      <div id="baroque-gate-stage" class="baroque-gate-stage">
+        <!-- Left Pillar & Lantern -->
+        <img src="assets/images/gate_pillar_left_v2.png" class="gate-pillar gate-pillar-left" alt="Left Pillar" />
+
+        <!-- 3D Swinging Full-Height Door Panels -->
+        <div class="gate-doors-viewport">
+          <div id="gate-door-left-panel" class="gate-door-leaf gate-door-leaf-left">
+            <img src="assets/images/gate_leaf_full_left.png" class="gate-door-img" alt="Left Gate Door (Full Height)" />
+          </div>
+          <div id="gate-door-right-panel" class="gate-door-leaf gate-door-leaf-right">
+            <img src="assets/images/gate_leaf_full_right.png" class="gate-door-img" alt="Right Gate Door (Full Height)" />
+          </div>
+        </div>
+
+        <!-- Right Pillar & Lantern -->
+        <img src="assets/images/gate_pillar_right_v2.png" class="gate-pillar gate-pillar-right" alt="Right Pillar" />
+
+        <!-- Centered Padlock & Key Assembly -->
+        <div id="gate-padlock-assembly" class="gate-padlock-assembly" title="Tap to unlock!">
+          <div id="gate-unlock-prompt" class="gate-unlock-prompt">✨ Tap me to unlock ✨</div>
+          <img src="assets/images/heart_padlock.png" id="gate-padlock-img" class="gate-padlock-img" alt="Heart Padlock" />
+          <img src="assets/images/golden_heart_key.png" id="gate-key-prop" class="gate-key-prop" alt="Golden Heart Key" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 7: FINAL NIGHT SCENE & CANDLE BLOW (Master Photographic Crossfade)
+         - Layer 1: final_night_lit.jpg (Night garden, lit candle, cake, girl)
+         - Layer 2: final_night_stars.jpg (Extinguished candle, shooting stars, midnight)
+         - Breath stream -> Flame extinguishes -> Smoke wisp -> Smooth photo crossfade
+         - "Keep smiling. ♡" & Experience Again loop
          ==================================================================== -->
     <section id="scene-final" class="scene">
-      <div class="final-screen-card">
-        <h2 id="final-title-1" class="final-title-1">Happy Birthday</h2>
-        <h1 id="final-title-2" class="final-title-2">Yuhashvi ♡</h1>
-        <p id="final-message" class="final-message-text"></p>
+      <!-- Master Photographic Layers -->
+      <div id="final-photo-layer-lit" class="final-photo-layer final-photo-layer-lit"></div>
+      <div id="final-photo-layer-stars" class="final-photo-layer final-photo-layer-stars"></div>
 
-        <!-- Interactive Animated Cake Component -->
-        <div id="final-cake-stage" style="position: relative; width: 220px; height: 160px; margin: 10px auto 16px;">
-          <!-- Birthday Cake Graphic -->
-          <svg viewBox="0 0 200 150" width="100%" height="100%">
-            <defs>
-              <radialGradient id="cake-glow" cx="50%" cy="40%" r="50%">
-                <stop offset="0%" stop-color="#fff5cc" />
-                <stop offset="100%" stop-color="#ffd566" stop-opacity="0.1" />
-              </radialGradient>
-              <radialGradient id="flame-grad" cx="50%" cy="60%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="35%" stop-color="#ffea66" />
-                <stop offset="80%" stop-color="#ff5511" />
-                <stop offset="100%" stop-color="#cc2200" stop-opacity="0" />
-              </radialGradient>
-            </defs>
+      <!-- Interactive Dynamic Candle Flame Overlay on Cake Table -->
+      <div id="final-candle-hotspot" class="final-candle-hotspot">
+        <div id="candle-flame-left" class="real-flame-flicker real-flame-1"></div>
+        <div id="candle-flame-right" class="real-flame-flicker real-flame-2"></div>
+        <div id="candle-smoke-wisps" class="candle-smoke-wisps"></div>
+      </div>
 
-            <!-- Table & Plate -->
-            <ellipse cx="100" cy="138" rx="80" ry="12" fill="#d0bba8" opacity="0.6" />
-            <ellipse cx="100" cy="134" rx="70" ry="10" fill="#ffffff" stroke="#ecd7ce" stroke-width="1.5" />
+      <!-- Breath Stream Emitter on Candle Blow -->
+      <div id="final-breath-stream" class="final-breath-stream"></div>
 
-            <!-- Cake Base -->
-            <path d="M40,95 Q100,105 160,95 L160,125 Q100,135 40,125 Z" fill="#ffe2eb" />
-            <path d="M40,95 Q100,105 160,95 L160,75 Q100,85 40,75 Z" fill="#ffd0de" />
-            <!-- Frosting drips -->
-            <path d="M40,75 Q50,90 60,78 Q70,92 80,80 Q90,94 100,80 Q110,94 120,80 Q130,92 140,78 Q150,90 160,75 Q100,65 40,75 Z" fill="#ffffff" />
-
-            <!-- Golden Number "21" Candle -->
-            <text x="78" y="65" font-family="'Times New Roman', serif" font-size="28" font-weight="bold" fill="#f8cf50" stroke="#a0750c" stroke-width="0.8">2</text>
-            <text x="104" y="65" font-family="'Times New Roman', serif" font-size="28" font-weight="bold" fill="#f8cf50" stroke="#a0750c" stroke-width="0.8">1</text>
-
-            <!-- Candle Wick -->
-            <line x1="91" y1="40" x2="91" y2="35" stroke="#333333" stroke-width="2" />
-            <line x1="113" y1="40" x2="113" y2="35" stroke="#333333" stroke-width="2" />
-
-            <!-- Animated Candle Flame Group -->
-            <g id="cake-candle-flame" transform-origin="102 30">
-              <!-- Flame 1 -->
-              <ellipse cx="91" cy="27" rx="5.5" ry="10" fill="url(#flame-grad)" />
-              <ellipse cx="91" cy="28" rx="2.5" ry="5" fill="#ffffff" />
-              <!-- Flame 2 -->
-              <ellipse cx="113" cy="27" rx="5.5" ry="10" fill="url(#flame-grad)" />
-              <ellipse cx="113" cy="28" rx="2.5" ry="5" fill="#ffffff" />
-            </g>
-
-            <!-- Smoke Wisp on Candle Blow -->
-            <g id="cake-smoke-wisp" opacity="0" transform-origin="102 30">
-              <path d="M91,32 Q88,20 95,12 T92,0" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" />
-              <path d="M113,32 Q110,20 117,12 T114,0" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" />
-            </g>
-          </svg>
-        </div>
-
-        <!-- Girl Puppet Container (Final Scene) -->
-        <div id="final-girl-wrap" style="position: absolute; bottom: -20px; left: 40px; width: 150px; height: 230px; pointer-events: none;"></div>
-
-        <button id="btn-one-last-thing" class="btn-story btn-primary">
-          <span>✨</span> One Last Thing
+      <!-- Interactive Prompts & Final Congratulatory Message Card -->
+      <div class="final-scene-overlay-ui">
+        <button id="btn-one-last-thing" class="btn-story btn-primary btn-blow-prompt">
+          <span>✨</span> Blow the Candles & Make a Wish
         </button>
 
-        <div id="final-smiling-text" class="final-smiling-text">
-          Keep smiling. ♡
+        <div id="final-message-card" class="final-message-card">
+          <p id="final-message" class="final-message-text"></p>
+          <div id="final-smiling-text" class="final-smiling-text">
+            Keep smiling. ♡
+          </div>
+          <button id="btn-experience-again" class="btn-story btn-replay">
+            <span>↻</span> Experience Again
+          </button>
         </div>
-
-        <button id="btn-experience-again" class="btn-story" style="display: none; margin-top: 14px;">
-          ↻ Experience Again
-        </button>
       </div>
     </section>
 
@@ -300,6 +309,7 @@
   <script src="js/scenes/pinata-scene.js"></script>
   <script src="js/scenes/page2-envelope.js"></script>
   <script src="js/scenes/photo-gallery.js"></script>
+  <script src="js/scenes/gate-scene.js"></script>
   <script src="js/scenes/final-scene.js"></script>
   <script src="js/app.js"></script>
 </body>

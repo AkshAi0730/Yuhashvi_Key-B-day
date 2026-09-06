@@ -22,6 +22,7 @@ class Page2EnvelopeScene {
     this.letterTextEl = document.getElementById('letter-text-content');
     this.btnOpenEnvelope = document.getElementById('btn-open-envelope');
     this.btnContinuePhotos = document.getElementById('btn-continue-photos');
+    this.sealTouch = document.getElementById('envelope-seal-touch');
     this.isOpen = false;
 
     this.init();
@@ -49,6 +50,12 @@ class Page2EnvelopeScene {
     if (this.envelopeWrap) {
       this.envelopeWrap.addEventListener('click', () => this.openEnvelope());
     }
+    if (this.sealTouch) {
+      this.sealTouch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openEnvelope();
+      });
+    }
   }
 
   enter() {
@@ -56,7 +63,10 @@ class Page2EnvelopeScene {
     if (window.birthdayParticles) {
       window.birthdayParticles.setMode('hearts');
     }
-    if (this.envelopeFlap) this.envelopeFlap.classList.remove('open');
+    if (this.envelopeWrap) {
+      this.envelopeWrap.classList.remove('shaking');
+      this.envelopeWrap.classList.remove('opened');
+    }
     if (this.letterPaper) this.letterPaper.classList.remove('risen');
     if (this.letterTextEl) this.letterTextEl.textContent = '';
     if (this.btnContinuePhotos) this.btnContinuePhotos.style.display = 'none';
@@ -64,6 +74,10 @@ class Page2EnvelopeScene {
   }
 
   leave() {}
+
+  resetScene() {
+    this.enter();
+  }
 
   openEnvelope() {
     if (this.isOpen) return;
@@ -80,7 +94,10 @@ class Page2EnvelopeScene {
     }
 
     setTimeout(() => {
-      if (this.envelopeWrap) this.envelopeWrap.classList.remove('shaking');
+      if (this.envelopeWrap) {
+        this.envelopeWrap.classList.remove('shaking');
+        this.envelopeWrap.classList.add('opened');
+      }
 
       // 3. Envelope flap opens
       if (this.envelopeFlap) {
