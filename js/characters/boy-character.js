@@ -69,7 +69,7 @@ class BoyCharacter {
 
     const startX = 90;
     const startY = 130;
-    const peakY = 60;
+    const peakY = 40;
     const groundY = 220;
 
     this.batElement.style.display = 'block';
@@ -77,7 +77,7 @@ class BoyCharacter {
     this.batElement.style.left = `${startX}px`;
     this.batElement.style.top = `${startY}px`;
 
-    const duration = 650;
+    const duration = 850; // Relaxed graceful throw
     const startTime = performance.now();
 
     const batFlight = (now) => {

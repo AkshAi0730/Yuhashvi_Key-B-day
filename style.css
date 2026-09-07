@@ -207,6 +207,7 @@ html, body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  display: none !important;
 }
 
 .gate-content {
@@ -236,11 +237,20 @@ html, body {
   font-weight: 600;
 }
 
-.gate-audio-hint {
+.gate-hints-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  max-width: 90vw;
+}
+
+.gate-audio-hint,
+.gate-device-hint {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 22px;
   padding: 10px 22px;
   border-radius: 30px;
   background: rgba(255, 255, 255, 0.95);
@@ -250,13 +260,26 @@ html, body {
   font-size: 14px;
   font-weight: 600;
   color: #8c2f48;
-  max-width: 90vw;
   line-height: 1.4;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.gate-audio-hint {
   animation: gentleBounce 3s infinite ease-in-out;
 }
 
-.gate-audio-icon {
-  font-size: 20px;
+.gate-device-hint {
+  background: rgba(255, 250, 240, 0.95);
+  border: 1px solid rgba(255, 185, 90, 0.45);
+  box-shadow: 0 4px 18px rgba(230, 160, 60, 0.18);
+  color: #7d4414;
+  animation: gentleBounce 3s infinite ease-in-out 0.6s;
+}
+
+.gate-audio-icon,
+.gate-device-icon {
+  font-size: 19px;
   flex-shrink: 0;
 }
 
@@ -498,6 +521,19 @@ html, body {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
   transform-origin: top center;
   transition: height 0.05s linear;
+}
+
+.pinata-rope.starlight-infused {
+  width: 5px;
+  background: repeating-linear-gradient(45deg, #ffd700, #ffb700 5px, #ffffff 5px, #ffe699 10px);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.9), 0 0 28px rgba(255, 235, 150, 0.7);
+  animation: ropeStarlightShimmer 1.6s infinite linear;
+}
+
+@keyframes ropeStarlightShimmer {
+  0% { filter: drop-shadow(0 0 4px #ffd700) brightness(1); }
+  50% { filter: drop-shadow(0 0 18px #ffea75) brightness(1.35); }
+  100% { filter: drop-shadow(0 0 4px #ffd700) brightness(1); }
 }
 
 .pinata-body-wrap {
@@ -806,19 +842,22 @@ html, body {
   bottom: 305px;
   left: calc(50% - 90px);
   transform: translateX(-50%) scale(0);
-  background: rgba(255, 255, 255, 0.95);
-  padding: 12px 22px;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 12px 20px;
   border-radius: 20px;
   border: 2px solid #ff8da1;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  font-size: 19px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  font-size: 16px;
   font-weight: 700;
   color: #9c2743;
   z-index: 35;
   pointer-events: none;
   opacity: 0;
   transition: transform 0.38s var(--transition-smooth), opacity 0.38s ease;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 280px;
+  text-align: center;
+  line-height: 1.35;
 }
 
 .speech-bubble::after {
@@ -880,14 +919,69 @@ html, body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 22px 42px;
-  background: radial-gradient(ellipse at center, rgba(35, 18, 48, 0.85) 0%, rgba(18, 10, 28, 0.75) 75%, transparent 100%);
+  padding: 22px 54px;
+  background: radial-gradient(ellipse at center, rgba(35, 18, 48, 0.88) 0%, rgba(18, 10, 28, 0.78) 75%, transparent 100%);
   border-radius: 36px;
-  border: 1px solid rgba(255, 215, 0, 0.45);
-  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.6), 0 0 35px rgba(255, 215, 0, 0.35);
-  animation: floatGentleArch 3s ease-in-out infinite;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.65), 0 0 38px rgba(255, 215, 0, 0.4);
   pointer-events: auto;
   z-index: 40;
+  clip-path: inset(0 50% 0 50% round 36px);
+  transform-origin: center center;
+}
+
+.birthday-reveal-wrap.visible .birthday-wish-banner {
+  animation: scrollUnrollOpening 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatGentleArch 3s ease-in-out 1.35s infinite;
+}
+
+/* Ornate golden scroll handles that unroll outward with the banner */
+.birthday-wish-banner::before,
+.birthday-wish-banner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 85%;
+  background: linear-gradient(180deg, #ffd700 0%, #ffae19 50%, #996515 100%);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8), inset 0 1px 2px #fff;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.birthday-wish-banner::before {
+  left: 12px;
+}
+
+.birthday-wish-banner::after {
+  right: 12px;
+}
+
+@keyframes scrollUnrollOpening {
+  0% {
+    clip-path: inset(0 50% 0 50% round 36px);
+    transform: translateX(-50%) scaleX(0.08) scaleY(0.92);
+    opacity: 0;
+    filter: drop-shadow(0 0 45px rgba(255, 215, 0, 1));
+  }
+  15% {
+    opacity: 1;
+    clip-path: inset(0 42% 0 42% round 36px);
+    transform: translateX(-50%) scaleX(0.22) scaleY(1.05);
+  }
+  60% {
+    clip-path: inset(0 10% 0 10% round 36px);
+    transform: translateX(-50%) scaleX(0.92) scaleY(0.98);
+  }
+  85% {
+    clip-path: inset(0 0% 0 0% round 36px);
+    transform: translateX(-50%) scaleX(1.03) scaleY(1.02);
+  }
+  100% {
+    clip-path: inset(0 0% 0 0% round 36px);
+    transform: translateX(-50%) scaleX(1) scaleY(1);
+    opacity: 1;
+  }
 }
 
 .birthday-wish-subtitle {
@@ -1001,12 +1095,12 @@ html, body {
   margin-bottom: 14px;
 }
 
-/* Interactive Luxury Stationery Envelope (media_1788705465436.jpg) */
+/* Interactive Luxury Stationery Envelope (3:2 Rectangular Format) */
 .envelope-interactive-wrap {
   position: relative;
-  width: 320px;
-  max-width: 86vw;
-  margin: 35px auto 20px;
+  width: 480px;
+  max-width: 90vw;
+  margin: 30px auto 20px;
   cursor: pointer;
   z-index: 5;
 }
@@ -1026,7 +1120,7 @@ html, body {
 }
 
 .envelope-interactive-wrap.opened .envelope-v2-card {
-  transform: translateY(36px);
+  transform: translateY(38px);
   opacity: 1;
 }
 
@@ -1046,11 +1140,11 @@ html, body {
 
 .envelope-seal-touch {
   position: absolute;
-  left: 50%;
-  top: 64%;
+  left: 51%;
+  top: 56%;
   transform: translate(-50%, -50%);
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   cursor: pointer;
   z-index: 8;
@@ -1079,9 +1173,9 @@ html, body {
 
 .letter-paper {
   position: absolute;
-  bottom: 30px;
-  left: 15px;
-  right: 15px;
+  bottom: 25px;
+  left: 20px;
+  right: 20px;
   height: 120px;
   background: #fcf9f2;
   background-image: radial-gradient(#eadbc2 0.65px, transparent 0.65px);
@@ -1089,7 +1183,7 @@ html, body {
   border: 1.5px solid #dfc79b;
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-  padding: 22px 24px;
+  padding: 22px 28px;
   z-index: 3;
   transition: transform 0.85s var(--transition-smooth), opacity 0.6s ease;
   text-align: left;
@@ -1098,13 +1192,13 @@ html, body {
 }
 
 .letter-paper.risen {
-  transform: translateY(-112px);
+  transform: translateY(-120px);
   height: auto;
-  min-height: 170px;
-  width: 340px;
+  min-height: 180px;
+  width: 450px;
   max-width: 90vw;
   left: 50%;
-  margin-left: -170px;
+  margin-left: -225px;
   z-index: 20;
   opacity: 1;
   pointer-events: auto;
@@ -1112,7 +1206,10 @@ html, body {
   border: 2px solid #d4af37;
 }
 
-@media (max-width: 440px) {
+@media (max-width: 480px) {
+  .envelope-interactive-wrap {
+    width: 90vw;
+  }
   .letter-paper.risen {
     width: 90vw;
     margin-left: -45vw;

@@ -132,6 +132,40 @@ class ParticleSystem {
     }
   }
 
+  // Magical Starlight Cascading Down the Rope (Spec #26 Enhancement)
+  triggerRopeStarlight(ropeX, startY, endY, callback) {
+    const starColors = ['#ffd700', '#ffea75', '#ffffff', '#ffb700', '#ffe699'];
+    const totalSteps = 24;
+    const stepDist = (endY - startY) / totalSteps;
+
+    let step = 0;
+    const streamInterval = setInterval(() => {
+      if (step >= totalSteps) {
+        clearInterval(streamInterval);
+        if (callback) callback();
+        return;
+      }
+      const curY = startY + step * stepDist;
+      for (let i = 0; i < 5; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 2.2 + 0.6;
+        this.particles.push({
+          type: 'sparkle',
+          x: ropeX + (Math.random() - 0.5) * 16,
+          y: curY + (Math.random() - 0.5) * 10,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed + 0.4,
+          size: Math.random() * 5 + 3,
+          color: starColors[Math.floor(Math.random() * starColors.length)],
+          life: 1,
+          decay: 0.028,
+          rotation: Math.random() * Math.PI * 2,
+        });
+      }
+      step++;
+    }, 32);
+  }
+
   animate() {
     if (!this.ctx || !this.canvas) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -193,6 +227,32 @@ class ParticleSystem {
         this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         this.ctx.fill();
         this.ctx.restore();
+      } else if (p.type === 'sparkle') {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= p.decay;
+        p.rotation += 0.08;
+
+        if (p.life > 0) {
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.rotation);
+          this.ctx.fillStyle = p.color;
+          this.ctx.globalAlpha = Math.max(p.life, 0);
+          this.ctx.shadowColor = p.color;
+          this.ctx.shadowBlur = 10;
+          const s = p.size;
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, -s);
+          this.ctx.quadraticCurveTo(0, 0, s, 0);
+          this.ctx.quadraticCurveTo(0, 0, 0, s);
+          this.ctx.quadraticCurveTo(0, 0, -s, 0);
+          this.ctx.quadraticCurveTo(0, 0, 0, -s);
+          this.ctx.fill();
+          this.ctx.restore();
+        } else {
+          this.particles.splice(i, 1);
+        }
       }
     }
 

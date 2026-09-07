@@ -141,36 +141,37 @@ class PinataScene {
     const hitX = Math.round(window.innerWidth / 2 - (isMobile ? 150 : 210));
 
     setTimeout(() => {
-      this.girl.walkTo(hitX, 3400, () => {
+      this.girl.walkTo(hitX, 4000, () => {
         // 2. Girl stops directly at her hitting position beside piñata and looks up
         setTimeout(() => {
           this.girl.lookUp(() => {
-            // 3. Boy peeks from left, reacts, and throws baseball bat safely beside girl on the grass
+            // 3. Boy peeks from left, reacts, and throws baseball bat safely to the RIGHT side of the girl on the grass
             setTimeout(() => {
-              const safeLandingX = Math.max(hitX - 75, 80); // Safe separation on her left, NEVER lands on or overlaps girl
+              const safeLandingX = Math.round(hitX + (isMobile ? 120 : 155)); // Right side of the girl!
               this.boy.performThrowSequence(safeLandingX, () => {
-                // Comic BAM! sound & visual effect
+                // Comic BAM! sound & visual effect on girl's right
                 this.app.audio.playBam();
                 if (this.bamEffect) {
+                  this.bamEffect.textContent = 'BAM!';
                   this.bamEffect.style.left = `${safeLandingX - 10}px`;
                   this.bamEffect.style.bottom = '110px';
                   this.bamEffect.classList.add('pop');
                   setTimeout(() => this.bamEffect.classList.remove('pop'), 700);
                 }
               }, () => {
-                // 4. Girl notices bat safely beside her, bends down, picks it up, stands up in stance
+                // 4. Girl notices bat on her right, bends down, picks it up, stands up in stance
                 setTimeout(() => {
                   this.girl.pickUpBat(() => {
-                    // 5. Girl tries 3 jumping swings that miss
+                    // 5. Girl tries 3 jumping swings that miss (relaxed pacing)
                     setTimeout(() => {
                       this.executeMissJumps();
-                    }, 600);
+                    }, 700);
                   });
-                }, 400);
+                }, 450);
               });
-            }, 600);
+            }, 700);
           });
-        }, 400);
+        }, 500);
       });
     }, 400);
   }
@@ -191,17 +192,20 @@ class PinataScene {
                 this.app.audio.playWhoosh();
                 this.girl.jumpAndSwing(95, false, null, () => {
                   // Speech bubble: "Help me! 🥺"
-                  if (this.speechBubble) this.speechBubble.classList.add('active');
+                  if (this.speechBubble) {
+                    this.speechBubble.textContent = "Help me! 🥺";
+                    this.speechBubble.classList.add('active');
+                  }
 
                   // Shooting star arrives to unlock interactive control
                   setTimeout(() => {
                     this.triggerHelpArrival();
-                  }, 1600);
+                  }, 1800);
                 });
-              }, 500);
+              }, 650);
             });
           });
-        }, 500);
+        }, 650);
       });
     });
   }
@@ -211,9 +215,27 @@ class PinataScene {
     if (window.birthdayParticles) {
       window.birthdayParticles.triggerShootingStar(() => {
         if (this.speechBubble) this.speechBubble.classList.remove('active');
-        if (this.ropeIndicator) this.ropeIndicator.classList.add('visible');
-        this.enableInteractivePinata();
+
+        // Cascade magical starlight particles down the rope
+        const ropeRect = this.pinataRope ? this.pinataRope.getBoundingClientRect() : null;
+        const ropeX = ropeRect ? (ropeRect.left + ropeRect.width / 2) : (window.innerWidth / 2);
+        const startY = 0;
+        const endY = this.pinataCurrentY + 70;
+
+        window.birthdayParticles.triggerRopeStarlight(ropeX, startY, endY, () => {
+          if (this.pinataRope) {
+            this.pinataRope.classList.add('starlight-infused');
+          }
+          if (this.ropeIndicator) {
+            const txt = this.ropeIndicator.querySelector('.rope-indicator-text');
+            if (txt) txt.textContent = "Pull rope with mouse to move piñata! ✨";
+            this.ropeIndicator.classList.add('visible');
+          }
+          this.enableInteractivePinata();
+        });
       });
+    } else {
+      this.enableInteractivePinata();
     }
   }
 
@@ -230,8 +252,7 @@ class PinataScene {
   onMouseMove(e) {
     if (!this.isInteractive || this.isBroken) return;
     const windowH = window.innerHeight;
-    // EXACT RULE: Mouse near TOP (e.clientY near 0) -> pinata moves DOWN
-    // Mouse near BOTTOM (e.clientY near windowH) -> pinata moves UP
+    // Inverted vertical control: Mouse near TOP -> pinata moves DOWN; near BOTTOM -> UP
     const invertedRatio = 1 - Math.min(Math.max(e.clientY / windowH, 0), 1);
     this.pinataTargetY = this.minY + invertedRatio * (this.maxY - this.minY);
   }
@@ -247,21 +268,23 @@ class PinataScene {
   }
 
   updatePhysics() {
-    if (!this.isInteractive) return;
+    if (!this.isInteractive && !this.isBroken) return;
 
-    // Smooth elastic spring delay
-    this.pinataCurrentY += (this.pinataTargetY - this.pinataCurrentY) * 0.12;
+    // Smooth relaxed elastic spring delay (0.08 for natural floating inertia)
+    this.pinataCurrentY += (this.pinataTargetY - this.pinataCurrentY) * 0.08;
 
     // Continuous ceiling-anchored rope extension & subtraction
     if (this.pinataRope) {
       this.pinataRope.style.height = `${this.pinataCurrentY + 70}px`;
     }
 
-    // Reachable threshold: when pinata lowers to hitting height
+    // Reachable strike threshold >= 190
     if (this.pinataCurrentY >= 190) {
       if (!this.isReachable) {
         this.isReachable = true;
         if (this.mobileTapBtn) this.mobileTapBtn.classList.add('visible');
+        // Player lowered piñata! Dismiss pleading speech bubble so girl can strike
+        if (this.speechBubble) this.speechBubble.classList.remove('active');
       }
     } else {
       if (this.isReachable) {
@@ -270,95 +293,109 @@ class PinataScene {
       }
     }
 
-    this.physicsRaf = requestAnimationFrame(() => this.updatePhysics());
+    if (!this.isBroken) {
+      this.physicsRaf = requestAnimationFrame(() => this.updatePhysics());
+    }
   }
 
   startContinuousGirlJumping() {
-    if (this.isBroken || this.isHitting) return;
+    if (this.isBroken) return;
 
-    const attemptJump = () => {
-      if (this.isBroken || this.isHitting || !this.isInteractive) return;
-
-      const jumpH = this.isReachable ? 105 : 75;
-      this.girl.jumpAndSwing(jumpH, this.isReachable, () => {
-        if (this.isReachable && this.girl.swingBat) {
-          this.girl.swingBat();
-        }
-        // Apex swing check
-        if (this.isReachable && !this.isHitting && !this.isBroken) {
-          this.executeHitSequence();
-        }
-      }, () => {
-        if (!this.isBroken && !this.isHitting && this.isInteractive) {
-          setTimeout(attemptJump, 900);
-        }
-      });
-    };
-
-    attemptJump();
-  }
-
-  // Hit Sequence 1 to 4: Thump -> Bam -> Whack -> Crack
-  executeHitSequence() {
-    this.isHitting = true;
-    this.isInteractive = false;
-    if (this.ropeIndicator) this.ropeIndicator.classList.remove('visible');
-    if (this.mobileTapBtn) this.mobileTapBtn.classList.remove('visible');
-
-    const hits = [
-      { text: "THUMP!", soundIdx: 1, shake: 14 },
-      { text: "BAM!", soundIdx: 2, shake: 20 },
-      { text: "WHACK!", soundIdx: 3, shake: 26 },
-      { text: "CRACK!", soundIdx: 4, shake: 34 }
+    const hitsData = [
+      { text: "THUMP!", soundIdx: 1, shake: 16 },
+      { text: "BAM!", soundIdx: 2, shake: 22 },
+      { text: "WHACK!", soundIdx: 3, shake: 28 },
+      { text: "CRACK!", soundIdx: 4, shake: 36 }
     ];
 
-    let currentHit = 0;
-
-    const runHitStep = () => {
-      if (currentHit >= hits.length) {
-        this.breakPinata();
+    const attemptCycle = () => {
+      if (this.isBroken || !this.isInteractive || this.isHitting) {
+        if (!this.isBroken && this.isInteractive) {
+          setTimeout(attemptCycle, 600);
+        }
         return;
       }
 
-      const hitData = hits[currentHit];
-      currentHit++;
-      this.app.audio.playHit(hitData.soundIdx);
+      if (this.isReachable) {
+        // --- CASE 1: Piñata is lowered and reachable! Execute current hit ---
+        this.isHitting = true;
+        if (this.speechBubble) this.speechBubble.classList.remove('active');
 
-      // On Hit 3, split open 3D cracked piñata
-      if (currentHit === 3) {
-        if (this.pinataIntactImg) this.pinataIntactImg.style.display = 'none';
-        if (this.pinataCrackedImg) {
-          this.pinataCrackedImg.style.display = 'block';
-          this.pinataCrackedImg.style.opacity = '1';
-        }
+        this.girl.jumpAndSwing(105, true, () => {
+          // Apex of swing: Bat contacts piñata!
+          if (this.girl.swingBat) this.girl.swingBat();
+
+          this.hitCount++;
+          const currentHitIdx = Math.min(this.hitCount - 1, hitsData.length - 1);
+          const hitInfo = hitsData[currentHitIdx];
+
+          this.app.audio.playHit(hitInfo.soundIdx);
+
+          // On Hit 3: split open cracked piñata
+          if (this.hitCount === 3) {
+            if (this.pinataIntactImg) this.pinataIntactImg.style.display = 'none';
+            if (this.pinataCrackedImg) {
+              this.pinataCrackedImg.style.display = 'block';
+              this.pinataCrackedImg.style.opacity = '1';
+            }
+          }
+
+          // Shaking piñata body
+          if (this.pinataBody) {
+            this.pinataBody.style.transform = `scale(${1 + this.hitCount * 0.06}) rotate(${this.hitCount % 2 === 0 ? 18 : -18}deg)`;
+            setTimeout(() => {
+              if (this.pinataBody) this.pinataBody.style.transform = 'scale(1) rotate(0deg)';
+            }, 240);
+          }
+
+          // Comic hit text pop
+          if (this.bamEffect) {
+            this.bamEffect.textContent = hitInfo.text;
+            this.bamEffect.style.left = '50%';
+            this.bamEffect.style.bottom = `${360 - this.pinataCurrentY}px`;
+            this.bamEffect.classList.add('pop');
+            setTimeout(() => this.bamEffect.classList.remove('pop'), 600);
+          }
+        }, () => {
+          // Jump completed & girl lands back on ground
+          this.isHitting = false;
+
+          if (this.hitCount >= 4) {
+            this.breakPinata();
+          } else {
+            // Player keeps controlling! Relaxed interval before next swing attempt
+            setTimeout(attemptCycle, 1200);
+          }
+        });
+      } else {
+        // --- CASE 2: Piñata is held high / out of reach ---
+        // Girl tries to reach, misses swing, and asks the player to lower it!
+        this.isHitting = true;
+        this.girl.jumpAndSwing(75, false, () => {
+          this.app.audio.playWhoosh();
+        }, () => {
+          this.isHitting = false;
+
+          // If after 1 or 2 hits (or anytime it cannot reach), girl tells player:
+          // "Let me break it! I need to see what's inside! 🥺💖"
+          if (this.speechBubble && !this.isReachable && !this.isBroken) {
+            this.speechBubble.textContent = "Let me break it! I need to see what's inside! 🥺💖";
+            this.speechBubble.classList.add('active');
+          }
+
+          // Relaxed pause before next jump attempt
+          setTimeout(attemptCycle, 1400);
+        });
       }
-
-      // Shaking pinata body
-      if (this.pinataBody) {
-        this.pinataBody.style.transform = `scale(${1 + currentHit * 0.06}) rotate(${currentHit % 2 === 0 ? 16 : -16}deg)`;
-        setTimeout(() => {
-          this.pinataBody.style.transform = 'scale(1) rotate(0deg)';
-        }, 220);
-      }
-
-      // Comic hit text
-      if (this.bamEffect) {
-        this.bamEffect.textContent = hitData.text;
-        this.bamEffect.style.left = '50%';
-        this.bamEffect.style.bottom = `${360 - this.pinataCurrentY}px`;
-        this.bamEffect.classList.add('pop');
-        setTimeout(() => this.bamEffect.classList.remove('pop'), 500);
-      }
-
-      // Girl swinging bat with realistic follow-through motion
-      this.girl.jumpAndSwing(105, true, () => {
-        if (this.girl.swingBat) this.girl.swingBat();
-      }, () => {
-        setTimeout(runHitStep, 500);
-      });
     };
 
-    runHitStep();
+    attemptCycle();
+  }
+
+  // Fallback for direct click on pinata or mobile tap button
+  executeHitSequence() {
+    if (this.isBroken || this.isHitting) return;
+    this.startContinuousGirlJumping();
   }
 
   // Pinata Shatter & 111 Doraemon Shower Pile Burial (Rule #15 - #19)

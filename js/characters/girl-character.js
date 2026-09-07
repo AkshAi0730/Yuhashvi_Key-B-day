@@ -141,10 +141,10 @@ class GirlCharacter {
     this.state = 'PICK_UP_BAT';
     if (this.idleAnimId) cancelAnimationFrame(this.idleAnimId);
 
-    // 1. Bend / reach down toward bat safely placed beside her on her left
+    // 1. Bend / reach down toward bat safely placed beside her on her right
     if (this.torso) {
-      this.torso.style.transition = 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
-      this.torso.style.transform = 'translateY(36px) rotate(-14deg) scaleY(0.9)';
+      this.torso.style.transition = 'transform 0.48s cubic-bezier(0.4, 0, 0.2, 1)';
+      this.torso.style.transform = 'translateY(36px) rotate(14deg) scaleY(0.9)';
     }
     if (this.shadow) {
       this.shadow.style.transform = 'scale(1.15)';

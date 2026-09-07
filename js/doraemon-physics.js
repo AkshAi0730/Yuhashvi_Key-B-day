@@ -388,9 +388,14 @@ class DoraemonPhysicsEngine {
         ctx.save();
         ctx.translate(d.x, d.y);
         ctx.rotate(d.rotation);
-        // Draw 3D collectible Doraemon figure sprite (100% transparent PNG)
+        // Draw 3D collectible Doraemon figure sprite (100% transparent PNG with preserved aspect ratio)
         if (this.imageLoaded && this.doraemonImg) {
-          ctx.drawImage(this.doraemonImg, -d.size / 2, -d.size / 2, d.size, d.size);
+          const aspect = (this.doraemonImg.naturalWidth && this.doraemonImg.naturalHeight)
+            ? (this.doraemonImg.naturalWidth / this.doraemonImg.naturalHeight)
+            : 0.625;
+          const drawH = d.size * 1.18;
+          const drawW = drawH * aspect;
+          ctx.drawImage(this.doraemonImg, -drawW / 2, -drawH / 2, drawW, drawH);
         } else {
           this.renderVectorDoraemonSprite(ctx, d.size);
         }
