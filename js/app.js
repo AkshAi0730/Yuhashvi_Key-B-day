@@ -49,8 +49,14 @@ class BirthdayApp {
     this.scenes['gate'] = new window.GateScene(this);
     this.scenes['final'] = new window.FinalScene(this);
 
-    // Mount initial scene: Page 1
-    this.goToScene('page1');
+    // Mount initial scene: Page 1 or URL hash deep-link if specified
+    const hashScene = window.location.hash ? window.location.hash.replace('#', '').trim() : '';
+    if (hashScene && this.scenes[hashScene]) {
+      if (this.audioGateOverlay) this.audioGateOverlay.classList.add('hidden');
+      this.goToScene(hashScene);
+    } else {
+      this.goToScene('page1');
+    }
   }
 
   goToScene(sceneId) {

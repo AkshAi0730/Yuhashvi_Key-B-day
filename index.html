@@ -14,6 +14,10 @@
     <div class="gate-content">
       <div class="gate-title">A Special Story</div>
       <div class="gate-subtitle">Tap to begin ♡</div>
+      <div class="gate-audio-hint">
+        <span class="gate-audio-icon">🎧</span>
+        <span>Wear earphones or increase volume to maximum for the best experience 🔊✨</span>
+      </div>
     </div>
   </div>
 
@@ -82,9 +86,9 @@
         <!-- 3D Doraemon Mound Layer: Background (Behind Girl) -->
         <canvas id="doraemon-bg-canvas"></canvas>
 
-        <!-- Inverted Spring Pinata Rig -->
+        <!-- Inverted Spring Pinata Rig (Ceiling Anchored) -->
         <div id="pinata-rig" class="pinata-rig">
-          <div class="pinata-rope"></div>
+          <div id="pinata-rope" class="pinata-rope"></div>
           <div id="pinata-body" class="pinata-body-wrap" title="Click or touch to swing!">
             <img id="pinata-img-intact" src="assets/images/pinata_star_intact.png" alt="Piñata" class="pinata-render-img" />
             <img id="pinata-img-cracked" src="assets/images/pinata_star_cracked.png" alt="Cracked Piñata" class="pinata-render-img pinata-cracked" />
@@ -124,9 +128,13 @@
         </div>
       </div>
 
-      <!-- Birthday Reveal Overlay with Floating Golden Arch -->
+      <!-- Birthday Reveal Overlay with High-Contrast Golden Banner -->
       <div id="birthday-reveal-wrap" class="birthday-reveal-wrap">
-        <img src="assets/images/golden_birthday_arch.png" id="golden-birthday-arch" class="golden-birthday-arch-img" alt="Happy Birthday Yuhasvi" />
+        <div id="birthday-wish-banner" class="birthday-wish-banner">
+          <div class="birthday-wish-subtitle">✨ A very special day ✨</div>
+          <div class="birthday-wish-title">Happy Birthday</div>
+          <div class="birthday-wish-name">Yuhashvi ♡</div>
+        </div>
         <button id="btn-continue-page2" class="btn-story btn-primary">
           <span>💌</span> I have something for you
         </button>
@@ -284,6 +292,8 @@
         </button>
 
         <div id="final-message-card" class="final-message-card">
+          <div id="final-title-1" class="final-title-1"></div>
+          <div id="final-title-2" class="final-title-2"></div>
           <p id="final-message" class="final-message-text"></p>
           <div id="final-smiling-text" class="final-smiling-text">
             Keep smiling. ♡

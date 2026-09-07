@@ -19,13 +19,14 @@ class GirlCharacter {
     this.idleAnimId = null;
     this.walkAnimId = null;
 
-    this.defaultLeft = (this.container && this.container.style.left) || '-220px';
+    this.defaultLeft = `${window.innerWidth + 60}px`;
     this.initDOM();
     this.startIdle();
   }
 
   initDOM() {
     if (!this.container) return;
+    this.container.style.left = this.defaultLeft;
     this.container.innerHTML = `
       <div class="girl-puppet">
         <!-- Ground Contact Shadow -->
@@ -94,40 +95,33 @@ class GirlCharacter {
     this.state = 'WALK';
     if (this.idleAnimId) cancelAnimationFrame(this.idleAnimId);
 
-    const startX = parseFloat(this.container.style.left) || -220;
-    const startTime = performance.now();
+    // 1. Activate walking gait bounce & tilt
+    if (this.torso) {
+      this.torso.classList.add('walking');
+    }
 
-    const walkLoop = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / durationMs, 1);
-      // Natural ease-out
-      const easeProgress = progress * (2 - progress);
+    // 2. Hardware-accelerated smooth CSS translation from right to left
+    if (this.container) {
+      this.container.style.transition = `left ${durationMs}ms cubic-bezier(0.2, 0.85, 0.25, 1)`;
+      void this.container.offsetWidth;
+      this.container.style.left = `${targetX}px`;
+    }
 
-      const currentX = startX + (targetX - startX) * easeProgress;
-      this.container.style.left = `${currentX}px`;
-
-      // 2-Phase walking gait: body lifts and tilts side to side with footfalls
-      const stepAngle = Math.sin(elapsed * 0.014) * 4;
-      const stepBobY = Math.abs(Math.sin(elapsed * 0.014)) * 7;
-
+    // 3. Complete walk and return to stance
+    setTimeout(() => {
       if (this.torso) {
-        this.torso.style.transform = `translateY(${-stepBobY}px) rotate(${stepAngle}deg)`;
+        this.torso.classList.remove('walking');
+        this.torso.style.transform = 'none';
       }
       if (this.shadow) {
-        this.shadow.style.transform = `scale(${1 - stepBobY * 0.03})`;
+        this.shadow.style.transform = 'none';
       }
-
-      if (progress < 1) {
-        this.walkAnimId = requestAnimationFrame(walkLoop);
-      } else {
-        if (this.torso) this.torso.style.transform = 'none';
-        if (this.shadow) this.shadow.style.transform = 'none';
-        this.startIdle();
-        if (onComplete) onComplete();
+      if (this.container) {
+        this.container.style.transition = 'none';
       }
-    };
-
-    this.walkAnimId = requestAnimationFrame(walkLoop);
+      this.startIdle();
+      if (onComplete) onComplete();
+    }, durationMs + 40);
   }
 
   // Look upward toward hanging piñata
@@ -147,10 +141,10 @@ class GirlCharacter {
     this.state = 'PICK_UP_BAT';
     if (this.idleAnimId) cancelAnimationFrame(this.idleAnimId);
 
-    // 1. Bend / reach down toward bat
+    // 1. Bend / reach down toward bat safely placed beside her on her left
     if (this.torso) {
       this.torso.style.transition = 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)';
-      this.torso.style.transform = 'translateY(36px) rotate(14deg) scaleY(0.9)';
+      this.torso.style.transform = 'translateY(36px) rotate(-14deg) scaleY(0.9)';
     }
     if (this.shadow) {
       this.shadow.style.transform = 'scale(1.15)';
@@ -169,7 +163,7 @@ class GirlCharacter {
       if (this.batHand) {
         this.batHand.style.display = 'block';
         this.batHand.style.opacity = '1';
-        this.batHand.style.transform = 'rotate(-35deg)';
+        this.batHand.style.transform = 'rotate(-30deg)';
       }
 
       this.showPose('bat');
@@ -184,6 +178,18 @@ class GirlCharacter {
         if (onComplete) onComplete();
       }, 550);
     }, 500);
+  }
+
+  // Authentic baseball bat swing animation
+  swingBat() {
+    if (this.batHand) {
+      this.batHand.classList.remove('swinging');
+      void this.batHand.offsetWidth;
+      this.batHand.classList.add('swinging');
+      setTimeout(() => {
+        if (this.batHand) this.batHand.classList.remove('swinging');
+      }, 480);
+    }
   }
 
   // Genuine Jump Swing: Crouch -> Spring up -> Apex bat swing -> Land & recover
@@ -201,11 +207,11 @@ class GirlCharacter {
     }
     if (this.batHand && this.hasBat) {
       this.batHand.style.transition = 'transform 0.22s ease-in';
-      this.batHand.style.transform = 'rotate(-55deg)';
+      this.batHand.style.transform = 'rotate(-62deg)';
     }
 
     setTimeout(() => {
-      // 2. Spring up to apex & powerful swing
+      // 2. Spring up to apex & powerful forward swing
       if (this.torso) {
         this.torso.style.transition = `transform 0.38s cubic-bezier(0.2, 0.8, 0.3, 1)`;
         this.torso.style.transform = `translateY(-${jumpHeightPx}px) scaleY(1.08)`;
@@ -217,13 +223,13 @@ class GirlCharacter {
       }
       if (this.batHand && this.hasBat) {
         this.batHand.style.transition = 'transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2)';
-        this.batHand.style.transform = 'rotate(58deg) scale(1.08)';
+        this.batHand.style.transform = 'rotate(22deg) scale(1.08)';
       }
 
       // 3. Apex swing & contact
       setTimeout(() => {
         if (this.torso) {
-          this.torso.style.transform = `translateY(-${jumpHeightPx + 10}px) rotate(12deg) scaleY(1.05)`;
+          this.torso.style.transform = `translateY(-${jumpHeightPx + 10}px) rotate(10deg) scaleY(1.05)`;
         }
         if (onApex) onApex();
 
@@ -240,7 +246,7 @@ class GirlCharacter {
           }
           if (this.batHand && this.hasBat) {
             this.batHand.style.transition = 'transform 0.3s ease';
-            this.batHand.style.transform = 'rotate(-35deg) scale(1)';
+            this.batHand.style.transform = 'rotate(-30deg) scale(1)';
           }
 
           // 5. Recovery to stance
@@ -253,7 +259,7 @@ class GirlCharacter {
               this.shadow.style.transform = 'scale(1)';
             }
             if (this.batHand && this.hasBat) {
-              this.batHand.style.transform = 'rotate(-35deg)';
+              this.batHand.style.transform = 'rotate(-30deg)';
             }
             this.startIdle();
             if (onComplete) onComplete();
@@ -288,12 +294,14 @@ class GirlCharacter {
     if (this.batHand) {
       this.batHand.style.opacity = '0';
       this.batHand.style.display = 'none';
-      this.batHand.style.transform = 'rotate(-35deg)';
+      this.batHand.style.transform = 'rotate(-30deg)';
+      this.batHand.classList.remove('swinging');
     }
     if (this.container) {
       this.container.style.transition = 'transform 1.1s cubic-bezier(0.2, 0.8, 0.3, 1)';
-      // Head and smiling face peek up prominently above the doll pile
-      this.container.style.transform = 'translateY(-145px)';
+      // Head and smiling face peek up prominently above the doll pile (keeping stand and feet naturally buried)
+      const peekY = window.innerWidth <= 900 ? '-75px' : '-95px';
+      this.container.style.transform = `translateY(${peekY})`;
     }
     // Looks left
     setTimeout(() => {
@@ -345,10 +353,11 @@ class GirlCharacter {
     if (this.batHand) {
       this.batHand.style.opacity = '0';
       this.batHand.style.display = 'none';
-      this.batHand.style.transform = 'rotate(-35deg)';
+      this.batHand.style.transform = 'rotate(-30deg)';
+      this.batHand.classList.remove('swinging');
     }
     if (this.container) {
-      this.container.style.left = this.defaultLeft;
+      this.container.style.left = `${window.innerWidth + 60}px`;
       this.container.style.transform = 'none';
     }
     if (this.torso) {

@@ -15,7 +15,7 @@ class AudioSystem {
     this.masterGain = null;
     this.musicGain = null;
     this.sfxGain = null;
-    this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.20;
+    this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.48;
     this.currentAudioElement = null;
 
     // Musical scale frequencies for generative synthesizer (Pentatonic Major / Lydian)

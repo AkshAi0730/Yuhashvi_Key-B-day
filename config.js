@@ -141,6 +141,6 @@ window.BIRTHDAY_CONFIG = {
     exitMusic: "",    // [ADD EXIT MUSIC]
     pinataMusic: "",  // [ADD PINATA MUSIC]
     finalMusic: "",   // [ADD FINAL MUSIC]
-    defaultVolume: 0.20 // 15-25% volume target
+    defaultVolume: 0.48 // 40-50% volume target
   }
 };

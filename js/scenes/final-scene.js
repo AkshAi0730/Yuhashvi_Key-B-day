@@ -21,6 +21,7 @@ class FinalScene {
     this.smokeWisps = document.getElementById('candle-smoke-wisps');
     this.btnBlow = document.getElementById('btn-one-last-thing');
     this.messageCard = document.getElementById('final-message-card');
+    this.breathStream = document.getElementById('final-breath-stream');
     this.title1El = document.getElementById('final-title-1');
     this.title2El = document.getElementById('final-title-2');
     this.messageEl = document.getElementById('final-message');
@@ -66,6 +67,9 @@ class FinalScene {
 
   resetScene() {
     this.isBlown = false;
+    if (this.breathStream) {
+      this.breathStream.classList.remove('active');
+    }
     if (this.starsLayer) {
       this.starsLayer.style.opacity = '0';
     }
@@ -101,8 +105,14 @@ class FinalScene {
       }, 400);
     }
 
-    // 2. Play gentle breath / blow sound
+    // 2. Play gentle breath / blow sound & emit breath stream
     this.app.audio.playCandleBlow();
+    if (this.breathStream) {
+      this.breathStream.classList.add('active');
+      setTimeout(() => {
+        if (this.breathStream) this.breathStream.classList.remove('active');
+      }, 800);
+    }
 
     // 3. Extinguish candle flames & rise smoke curls
     setTimeout(() => {
@@ -110,18 +120,18 @@ class FinalScene {
       if (this.candleFlame2) this.candleFlame2.classList.add('extinguished');
       if (this.smokeWisps) this.smokeWisps.classList.add('active');
 
-      // 4. Smoothly crossfade from lit night scene to starry celestial shooting star sky
+      // 4. Smoothly crossfade from lit night scene to starry celestial midnight sky
       setTimeout(() => {
         if (this.starsLayer) {
           this.starsLayer.style.opacity = '1';
         }
 
-        // 5. Clean, elegant photographic crossfade with unlit wicks and smoke wisps (no shooting stars/particles)
-
-        // 6. Reveal celebratory message card with [ADD FINAL MESSAGE], "Keep smiling. ♡", and replay button
+        // 5. Reveal celebratory message card with [ADD FINAL MESSAGE], "Keep smiling. ♡", and replay button
         setTimeout(() => {
           if (this.messageCard) {
             this.messageCard.style.display = 'block';
+            this.messageCard.style.opacity = '0';
+            void this.messageCard.offsetWidth;
             this.messageCard.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
             this.messageCard.style.opacity = '1';
           }

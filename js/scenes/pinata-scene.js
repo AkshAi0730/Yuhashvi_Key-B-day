@@ -16,10 +16,12 @@ class PinataScene {
     this.app = app;
     this.el = document.getElementById('scene-pinata');
     this.pinataRig = document.getElementById('pinata-rig');
+    this.pinataRope = document.getElementById('pinata-rope') || (this.pinataRig && this.pinataRig.querySelector('.pinata-rope'));
     this.pinataBody = document.getElementById('pinata-body');
     this.pinataIntactImg = document.getElementById('pinata-img-intact');
     this.pinataCrackedImg = document.getElementById('pinata-img-cracked');
     this.goldenArchImg = document.getElementById('golden-birthday-arch');
+    this.birthdayWishBanner = document.getElementById('birthday-wish-banner');
     this.ropeIndicator = document.getElementById('rope-indicator');
     this.mobileTapBtn = document.getElementById('btn-mobile-tap');
     this.bamEffect = document.getElementById('bam-effect');
@@ -109,6 +111,7 @@ class PinataScene {
     if (this.mobileTapBtn) this.mobileTapBtn.classList.remove('visible');
     if (this.birthdayRevealWrap) this.birthdayRevealWrap.classList.remove('visible');
     if (this.goldenArchImg) this.goldenArchImg.style.opacity = '0';
+    if (this.birthdayWishBanner) this.birthdayWishBanner.style.opacity = '0';
     if (this.cameraFrame) this.cameraFrame.classList.remove('zoom-near');
     if (this.girl && this.girl.el) this.girl.el.style.opacity = '1';
 
@@ -121,8 +124,11 @@ class PinataScene {
       this.pinataCrackedImg.style.opacity = '0';
     }
 
+    if (this.pinataRope) {
+      this.pinataRope.style.height = `${this.pinataCurrentY + 70}px`;
+    }
     if (this.pinataRig) {
-      this.pinataRig.style.transform = `translateX(-50%) translateY(${this.pinataCurrentY}px)`;
+      this.pinataRig.style.transform = 'translateX(-50%)';
       this.pinataRig.style.display = 'flex';
       this.pinataRig.style.opacity = '1';
     }
@@ -130,16 +136,18 @@ class PinataScene {
 
   // Sequenced Story Arc (Specs 19 - 41)
   startStorySequence() {
-    // 1. Girl enters walking from left with authentic gait and hair inertia
-    const targetCenterX = window.innerWidth / 2 - 90;
+    // 1. Girl enters walking from RIGHT to LEFT, stopping directly at her hitting stance beside piñata
+    const isMobile = window.innerWidth <= 900;
+    const hitX = Math.round(window.innerWidth / 2 - (isMobile ? 150 : 210));
+
     setTimeout(() => {
-      this.girl.walkTo(targetCenterX, 3200, () => {
-        // 2. Girl stops in center and looks up at the pinata
+      this.girl.walkTo(hitX, 3400, () => {
+        // 2. Girl stops directly at her hitting position beside piñata and looks up
         setTimeout(() => {
           this.girl.lookUp(() => {
-            // 3. Boy peeks from left, reacts, and throws baseball bat safely beside girl (Rule #3 & #10)
+            // 3. Boy peeks from left, reacts, and throws baseball bat safely beside girl on the grass
             setTimeout(() => {
-              const safeLandingX = targetCenterX + 115; // Safe separation, NEVER lands on or overlaps girl
+              const safeLandingX = Math.max(hitX - 75, 80); // Safe separation on her left, NEVER lands on or overlaps girl
               this.boy.performThrowSequence(safeLandingX, () => {
                 // Comic BAM! sound & visual effect
                 this.app.audio.playBam();
@@ -150,7 +158,7 @@ class PinataScene {
                   setTimeout(() => this.bamEffect.classList.remove('pop'), 700);
                 }
               }, () => {
-                // 4. Girl notices bat safely beside her, bends down, picks it up, stands up
+                // 4. Girl notices bat safely beside her, bends down, picks it up, stands up in stance
                 setTimeout(() => {
                   this.girl.pickUpBat(() => {
                     // 5. Girl tries 3 jumping swings that miss
@@ -244,8 +252,9 @@ class PinataScene {
     // Smooth elastic spring delay
     this.pinataCurrentY += (this.pinataTargetY - this.pinataCurrentY) * 0.12;
 
-    if (this.pinataRig) {
-      this.pinataRig.style.transform = `translateX(-50%) translateY(${this.pinataCurrentY}px)`;
+    // Continuous ceiling-anchored rope extension & subtraction
+    if (this.pinataRope) {
+      this.pinataRope.style.height = `${this.pinataCurrentY + 70}px`;
     }
 
     // Reachable threshold: when pinata lowers to hitting height
@@ -253,23 +262,11 @@ class PinataScene {
       if (!this.isReachable) {
         this.isReachable = true;
         if (this.mobileTapBtn) this.mobileTapBtn.classList.add('visible');
-        // Move girl smoothly to stand close beside the piñata without being covered
-        if (this.girl && this.girl.container) {
-          const hitX = window.innerWidth / 2 - 240;
-          this.girl.container.style.transition = 'left 0.45s cubic-bezier(0.2, 0.8, 0.3, 1)';
-          this.girl.container.style.left = `${hitX}px`;
-        }
       }
     } else {
       if (this.isReachable) {
         this.isReachable = false;
         if (this.mobileTapBtn) this.mobileTapBtn.classList.remove('visible');
-        // Return slightly toward center when piñata rises high
-        if (this.girl && this.girl.container) {
-          const normalX = window.innerWidth / 2 - 170;
-          this.girl.container.style.transition = 'left 0.55s ease';
-          this.girl.container.style.left = `${normalX}px`;
-        }
       }
     }
 
@@ -284,6 +281,9 @@ class PinataScene {
 
       const jumpH = this.isReachable ? 105 : 75;
       this.girl.jumpAndSwing(jumpH, this.isReachable, () => {
+        if (this.isReachable && this.girl.swingBat) {
+          this.girl.swingBat();
+        }
         // Apex swing check
         if (this.isReachable && !this.isHitting && !this.isBroken) {
           this.executeHitSequence();
@@ -350,8 +350,10 @@ class PinataScene {
         setTimeout(() => this.bamEffect.classList.remove('pop'), 500);
       }
 
-      // Girl swinging bat
-      this.girl.jumpAndSwing(105, true, null, () => {
+      // Girl swinging bat with realistic follow-through motion
+      this.girl.jumpAndSwing(105, true, () => {
+        if (this.girl.swingBat) this.girl.swingBat();
+      }, () => {
         setTimeout(runHitStep, 500);
       });
     };
@@ -418,6 +420,9 @@ class PinataScene {
           }
           if (this.goldenArchImg) {
             this.goldenArchImg.style.opacity = '1';
+          }
+          if (this.birthdayWishBanner) {
+            this.birthdayWishBanner.style.opacity = '1';
           }
           if (this.birthdayRevealWrap) {
             this.birthdayRevealWrap.classList.add('visible');
