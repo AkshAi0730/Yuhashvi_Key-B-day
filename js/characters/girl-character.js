@@ -163,7 +163,7 @@ class GirlCharacter {
       if (this.batHand) {
         this.batHand.style.display = 'block';
         this.batHand.style.opacity = '1';
-        this.batHand.style.transform = 'rotate(-30deg)';
+        this.batHand.style.transform = 'rotate(-40deg)';
       }
 
       this.showPose('bat');
@@ -259,7 +259,7 @@ class GirlCharacter {
               this.shadow.style.transform = 'scale(1)';
             }
             if (this.batHand && this.hasBat) {
-              this.batHand.style.transform = 'rotate(-30deg)';
+              this.batHand.style.transform = 'rotate(-40deg)';
             }
             this.startIdle();
             if (onComplete) onComplete();
@@ -294,7 +294,7 @@ class GirlCharacter {
     if (this.batHand) {
       this.batHand.style.opacity = '0';
       this.batHand.style.display = 'none';
-      this.batHand.style.transform = 'rotate(-30deg)';
+      this.batHand.style.transform = 'rotate(-40deg)';
       this.batHand.classList.remove('swinging');
     }
     if (this.container) {

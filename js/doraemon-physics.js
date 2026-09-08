@@ -36,13 +36,24 @@ class DoraemonPhysicsEngine {
   resize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    if (this.bgCanvas) {
-      this.bgCanvas.width = w;
-      this.bgCanvas.height = h;
+    const dpr = window.devicePixelRatio || 1;
+    if (this.bgCanvas && this.bgCtx) {
+      this.bgCanvas.width = Math.round(w * dpr);
+      this.bgCanvas.height = Math.round(h * dpr);
+      this.bgCanvas.style.width = `${w}px`;
+      this.bgCanvas.style.height = `${h}px`;
+      this.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.bgCtx.imageSmoothingEnabled = true;
+      this.bgCtx.imageSmoothingQuality = 'high';
     }
-    if (this.fgCanvas) {
-      this.fgCanvas.width = w;
-      this.fgCanvas.height = h;
+    if (this.fgCanvas && this.fgCtx) {
+      this.fgCanvas.width = Math.round(w * dpr);
+      this.fgCanvas.height = Math.round(h * dpr);
+      this.fgCanvas.style.width = `${w}px`;
+      this.fgCanvas.style.height = `${h}px`;
+      this.fgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.fgCtx.imageSmoothingEnabled = true;
+      this.fgCtx.imageSmoothingQuality = 'high';
     }
   }
 
@@ -324,8 +335,18 @@ class DoraemonPhysicsEngine {
   animate() {
     if (!this.isRunning) return;
 
-    if (this.bgCtx && this.bgCanvas) this.bgCtx.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
-    if (this.fgCtx && this.fgCanvas) this.fgCtx.clearRect(0, 0, this.fgCanvas.width, this.fgCanvas.height);
+    if (this.bgCtx && this.bgCanvas) {
+      this.bgCtx.save();
+      this.bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+      this.bgCtx.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
+      this.bgCtx.restore();
+    }
+    if (this.fgCtx && this.fgCanvas) {
+      this.fgCtx.save();
+      this.fgCtx.setTransform(1, 0, 0, 1, 0, 0);
+      this.fgCtx.clearRect(0, 0, this.fgCanvas.width, this.fgCanvas.height);
+      this.fgCtx.restore();
+    }
 
     for (let i = 0; i < this.dolls.length; i++) {
       const d = this.dolls[i];
@@ -410,8 +431,18 @@ class DoraemonPhysicsEngine {
     this.isRunning = false;
     if (this.animId) cancelAnimationFrame(this.animId);
     this.dolls = [];
-    if (this.bgCtx && this.bgCanvas) this.bgCtx.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
-    if (this.fgCtx && this.fgCanvas) this.fgCtx.clearRect(0, 0, this.fgCanvas.width, this.fgCanvas.height);
+    if (this.bgCtx && this.bgCanvas) {
+      this.bgCtx.save();
+      this.bgCtx.setTransform(1, 0, 0, 1, 0, 0);
+      this.bgCtx.clearRect(0, 0, this.bgCanvas.width, this.bgCanvas.height);
+      this.bgCtx.restore();
+    }
+    if (this.fgCtx && this.fgCanvas) {
+      this.fgCtx.save();
+      this.fgCtx.setTransform(1, 0, 0, 1, 0, 0);
+      this.fgCtx.clearRect(0, 0, this.fgCanvas.width, this.fgCanvas.height);
+      this.fgCtx.restore();
+    }
   }
 }
 

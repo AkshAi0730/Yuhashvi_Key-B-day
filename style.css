@@ -501,17 +501,46 @@ html, body {
   transform: scale(1.36);
 }
 
-/* Inverted Spring Pinata Rig (Ceiling Anchored) */
+/* Inverted Spring Pinata Rig (Ceiling Anchored with Harmonic Pendulum Swing) */
 .pinata-rig {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
+  transform-origin: 50% 0; /* Anchored at ceiling rope anchor */
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 25;
   pointer-events: none;
+}
+
+.pinata-rig.pendulum-swing {
+  animation: pinataPendulumSwingHit 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pinataPendulumSwingHit {
+  0% {
+    transform: translateX(-50%) rotate(0deg);
+  }
+  16% {
+    transform: translateX(-50%) rotate(-18deg); /* Swing to the left from girl's right-to-left hit impact */
+  }
+  38% {
+    transform: translateX(-50%) rotate(13deg);  /* Harmonic rebound to the right */
+  }
+  58% {
+    transform: translateX(-50%) rotate(-7deg);  /* Secondary oscillation left */
+  }
+  76% {
+    transform: translateX(-50%) rotate(3.5deg); /* Damped oscillation right */
+  }
+  90% {
+    transform: translateX(-50%) rotate(-1deg);  /* Micro oscillation settling */
+  }
+  100% {
+    transform: translateX(-50%) rotate(0deg);   /* Peaceful rest at vertical */
+  }
 }
 
 .pinata-rope {
@@ -673,15 +702,15 @@ html, body {
   transition: opacity 0.2s ease;
 }
 
-/* Articulated Bat Hand attached to girl holding authentic 3D wooden bat */
+/* Articulated Bat Hand attached to girl holding authentic 3D wooden bat (Seated directly in hand) */
 .girl-bat-hand {
   position: absolute;
-  top: 130px;
-  left: 100px;
+  top: 104px;
+  left: 91px;
   width: 90px;
   height: 46px;
-  transform-origin: 14px 28px;
-  transform: rotate(-30deg);
+  transform-origin: 14px 32px;
+  transform: rotate(-40deg);
   opacity: 0;
   display: none;
   transition: opacity 0.25s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
@@ -694,11 +723,11 @@ html, body {
 }
 
 @keyframes batSwingHit {
-  0% { transform: rotate(-30deg); }
-  25% { transform: rotate(-62deg) translateY(3px); }
-  65% { transform: rotate(22deg) scale(1.1); }
-  85% { transform: rotate(5deg); }
-  100% { transform: rotate(-30deg); }
+  0% { transform: rotate(-40deg); }
+  25% { transform: rotate(-72deg) translateY(3px); }
+  65% { transform: rotate(18deg) scale(1.08); }
+  85% { transform: rotate(-10deg); }
+  100% { transform: rotate(-40deg); }
 }
 
 .girl-bat-img {
@@ -916,104 +945,176 @@ html, body {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 22px 54px;
-  background: radial-gradient(ellipse at center, rgba(35, 18, 48, 0.88) 0%, rgba(18, 10, 28, 0.78) 75%, transparent 100%);
-  border-radius: 36px;
-  border: 1px solid rgba(255, 215, 0, 0.5);
-  box-shadow: 0 12px 42px rgba(0, 0, 0, 0.65), 0 0 38px rgba(255, 215, 0, 0.4);
+  width: 620px;
+  max-width: 90vw;
+  padding: 24px 50px;
+  background: linear-gradient(135deg, #fffdf2 0%, #fef4dc 35%, #fae6bc 70%, #f2d499 100%);
+  border-radius: 8px;
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.65),
+    0 0 32px rgba(255, 215, 0, 0.45),
+    inset 0 0 28px rgba(184, 134, 11, 0.28),
+    inset 0 0 0 2px rgba(212, 175, 55, 0.85),
+    inset 0 0 0 5px rgba(255, 252, 235, 0.7),
+    inset 0 0 0 7px rgba(184, 134, 11, 0.55);
   pointer-events: auto;
   z-index: 40;
-  clip-path: inset(0 50% 0 50% round 36px);
+  clip-path: inset(0 50% 0 50% round 8px);
   transform-origin: center center;
 }
 
 .birthday-reveal-wrap.visible .birthday-wish-banner {
-  animation: scrollUnrollOpening 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatGentleArch 3s ease-in-out 1.35s infinite;
+  animation: scrollUnrollFlawless 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards, floatGentleArch 3.5s ease-in-out 1.4s infinite;
 }
 
-/* Ornate golden scroll handles that unroll outward with the banner */
-.birthday-wish-banner::before,
-.birthday-wish-banner::after {
+.birthday-wish-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+/* Authentic Left & Right Scroll Dowels / Rollers */
+.scroll-roller {
+  position: absolute;
+  top: -14px;
+  bottom: -14px;
+  width: 18px;
+  background: linear-gradient(90deg, #8a5a13 0%, #d4af37 25%, #fff6bd 50%, #b8860b 80%, #613803 100%);
+  border-radius: 9px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55), inset 0 1px 2px #fff;
+  z-index: 10;
+}
+
+/* Golden Carved Finial Knobs at top and bottom of dowels */
+.scroll-roller::before,
+.scroll-roller::after {
   content: '';
   position: absolute;
-  top: 50%;
-  width: 10px;
-  height: 85%;
-  background: linear-gradient(180deg, #ffd700 0%, #ffae19 50%, #996515 100%);
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.8), inset 0 1px 2px #fff;
-  transform: translateY(-50%);
-  pointer-events: none;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 16px;
+  background: radial-gradient(ellipse at center, #fff6b0 0%, #e6b800 55%, #7a4f00 100%);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1px 2px #fff;
+}
+.scroll-roller::before {
+  top: -12px;
+  border-radius: 50% 50% 30% 30%;
+}
+.scroll-roller::after {
+  bottom: -12px;
+  border-radius: 30% 30% 50% 50%;
 }
 
-.birthday-wish-banner::before {
-  left: 12px;
+.scroll-roller.left-roller {
+  left: -9px;
 }
 
-.birthday-wish-banner::after {
-  right: 12px;
+.scroll-roller.right-roller {
+  right: -9px;
 }
 
-@keyframes scrollUnrollOpening {
+.birthday-reveal-wrap.visible .scroll-roller.left-roller {
+  animation: rollerTravelLeft 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.birthday-reveal-wrap.visible .scroll-roller.right-roller {
+  animation: rollerTravelRight 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scrollUnrollFlawless {
   0% {
-    clip-path: inset(0 50% 0 50% round 36px);
-    transform: translateX(-50%) scaleX(0.08) scaleY(0.92);
+    clip-path: inset(0 50% 0 50% round 8px);
+    transform: translateX(-50%) scaleX(0.02) scaleY(0.92);
     opacity: 0;
-    filter: drop-shadow(0 0 45px rgba(255, 215, 0, 1));
+    filter: drop-shadow(0 0 50px rgba(255, 215, 0, 1));
   }
   15% {
     opacity: 1;
-    clip-path: inset(0 42% 0 42% round 36px);
-    transform: translateX(-50%) scaleX(0.22) scaleY(1.05);
+    clip-path: inset(0 42% 0 42% round 8px);
+    transform: translateX(-50%) scaleX(0.18) scaleY(1.04);
   }
   60% {
-    clip-path: inset(0 10% 0 10% round 36px);
-    transform: translateX(-50%) scaleX(0.92) scaleY(0.98);
+    clip-path: inset(0 8% 0 8% round 8px);
+    transform: translateX(-50%) scaleX(0.96) scaleY(0.99);
   }
   85% {
-    clip-path: inset(0 0% 0 0% round 36px);
-    transform: translateX(-50%) scaleX(1.03) scaleY(1.02);
+    clip-path: inset(0 0% 0 0% round 8px);
+    transform: translateX(-50%) scaleX(1.02) scaleY(1.01);
   }
   100% {
-    clip-path: inset(0 0% 0 0% round 36px);
+    clip-path: inset(0 0% 0 0% round 8px);
     transform: translateX(-50%) scaleX(1) scaleY(1);
+    opacity: 1;
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+  }
+}
+
+@keyframes rollerTravelLeft {
+  0% {
+    left: calc(50% - 9px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    left: calc(50% - 9px);
+  }
+  100% {
+    left: -9px;
+    opacity: 1;
+  }
+}
+
+@keyframes rollerTravelRight {
+  0% {
+    right: calc(50% - 9px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+    right: calc(50% - 9px);
+  }
+  100% {
+    right: -9px;
     opacity: 1;
   }
 }
 
 .birthday-wish-subtitle {
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 3.5px;
   text-transform: uppercase;
-  color: #ffdf8d;
-  margin-bottom: 4px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+  color: #801d36;
+  margin-bottom: 2px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.9);
 }
 
 .birthday-wish-title {
   font-family: var(--font-cursive);
-  font-size: 58px;
-  line-height: 1.08;
-  background: linear-gradient(135deg, #fff7d6 0%, #ffd700 50%, #ffae19 100%);
+  font-size: 56px;
+  line-height: 1.1;
+  margin: 0;
+  background: linear-gradient(135deg, #70112a 0%, #a82442 45%, #781730 80%, #4a0718 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 22px rgba(255, 215, 0, 0.65));
+  filter: drop-shadow(0 1px 2px rgba(255, 240, 190, 0.9));
 }
 
 .birthday-wish-name {
   font-family: var(--font-cursive);
-  font-size: 68px;
+  font-size: 74px;
   line-height: 1.12;
-  background: linear-gradient(135deg, #ffffff 0%, #ffe494 40%, #ffc04d 80%, #ff9500 100%);
+  margin-top: -6px;
+  background: linear-gradient(135deg, #a3223f 0%, #750f24 40%, #c49237 85%, #8f6416 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 28px rgba(255, 180, 50, 0.75));
-  margin-top: -2px;
+  filter: drop-shadow(0 2px 5px rgba(184, 134, 11, 0.45));
 }
 
 #btn-continue-page2 {
@@ -1993,30 +2094,32 @@ html, body {
   }
 
   .girl-bat-hand {
-    top: 101px;
-    left: 78px;
+    top: 81px;
+    left: 71px;
     width: 70px;
     height: 36px;
-    transform-origin: 11px 22px;
+    transform-origin: 11px 25px;
+    transform: rotate(-40deg);
   }
 
   .birthday-wish-banner {
+    width: 92vw;
     padding: 16px 24px;
-    border-radius: 28px;
+    border-radius: 8px;
     top: 5%;
   }
 
   .birthday-wish-subtitle {
-    font-size: 12px;
-    letter-spacing: 1.5px;
+    font-size: 11px;
+    letter-spacing: 2px;
   }
 
   .birthday-wish-title {
-    font-size: 40px;
+    font-size: 38px;
   }
 
   .birthday-wish-name {
-    font-size: 48px;
+    font-size: 52px;
   }
 
   .final-photo-layer {

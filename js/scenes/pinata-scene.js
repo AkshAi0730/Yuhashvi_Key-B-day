@@ -340,11 +340,18 @@ class PinataScene {
             }
           }
 
-          // Shaking piñata body
+          // Physical pendulum swing: Entire rig attached to ceiling rope swings in harmonic motion
+          if (this.pinataRig) {
+            this.pinataRig.classList.remove('pendulum-swing');
+            void this.pinataRig.offsetWidth; // Reflow to restart animation on successive hits
+            this.pinataRig.classList.add('pendulum-swing');
+          }
+
+          // Dynamic scale pulse on pinata body upon bat impact
           if (this.pinataBody) {
-            this.pinataBody.style.transform = `scale(${1 + this.hitCount * 0.06}) rotate(${this.hitCount % 2 === 0 ? 18 : -18}deg)`;
+            this.pinataBody.style.transform = `scale(${1 + this.hitCount * 0.05})`;
             setTimeout(() => {
-              if (this.pinataBody) this.pinataBody.style.transform = 'scale(1) rotate(0deg)';
+              if (this.pinataBody) this.pinataBody.style.transform = 'scale(1)';
             }, 240);
           }
 
