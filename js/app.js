@@ -21,13 +21,60 @@ class BirthdayApp {
   }
 
   init() {
-    // Audio Unlock Overlay ("Tap to begin ♡")
+    this.isPageLoaded = false;
+
+    // Start dreamy music-box waiting music immediately on page load
+    if (this.audio && typeof this.audio.playWaitingMusic === 'function') {
+      this.audio.playWaitingMusic();
+    }
+
+    // Asset Preloading Engine with live download tracking & progress bar
+    if (window.AssetPreloader) {
+      this.preloader = new window.AssetPreloader({
+        onComplete: () => {
+          this.isPageLoaded = true;
+          if (this.audioGateOverlay) {
+            this.audioGateOverlay.classList.add('ready');
+          }
+        }
+      });
+    } else {
+      this.isPageLoaded = true;
+      if (this.audioGateOverlay) {
+        this.audioGateOverlay.classList.add('ready');
+      }
+      const beginSec = document.getElementById('gate-begin-section');
+      if (beginSec) beginSec.style.display = 'flex';
+      const loadSec = document.getElementById('gate-loading-section');
+      if (loadSec) loadSec.style.display = 'none';
+    }
+
+    // Story Transition Handler (Guards against starting before 100% download)
+    const handleStartStory = () => {
+      if (!this.isPageLoaded) return;
+      this.audio.init();
+      this.audio.resume();
+      this.audio.playMood('page1');
+      if (this.audioGateOverlay) {
+        this.audioGateOverlay.classList.add('hidden');
+      }
+    };
+
     if (this.audioGateOverlay) {
       this.audioGateOverlay.addEventListener('click', () => {
-        this.audio.init();
-        this.audio.resume();
-        this.audio.playMood('page1');
-        this.audioGateOverlay.classList.add('hidden');
+        if (this.isPageLoaded) {
+          handleStartStory();
+        }
+      });
+    }
+
+    const btnLetsBegin = document.getElementById('btn-lets-begin');
+    if (btnLetsBegin) {
+      btnLetsBegin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.isPageLoaded) {
+          handleStartStory();
+        }
       });
     }
 

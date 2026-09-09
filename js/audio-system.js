@@ -20,6 +20,12 @@ class AudioSystem {
 
     // Musical scale frequencies for generative synthesizer (Pentatonic Major / Lydian)
     this.chords = {
+      waiting: [
+        [261.63, 329.63, 392.00, 523.25], // C Major 7 (Dreamy music-box anticipation)
+        [174.61, 220.00, 261.63, 349.23], // F Major 7 (Warm, sweet lullaby)
+        [220.00, 261.63, 329.63, 440.00], // A Minor (Tender nostalgia)
+        [196.00, 246.94, 293.66, 392.00]  // G Major (Sparkling birthday melody)
+      ],
       page1: [
         [261.63, 329.63, 392.00, 523.25], // C Major
         [220.00, 261.63, 329.63, 440.00], // A Minor
@@ -98,6 +104,32 @@ class AudioSystem {
     return this.isMuted;
   }
 
+  // Play waiting music on the first page / loading screen
+  playWaitingMusic() {
+    this.init();
+    if (this.ctx && this.ctx.state === 'running') {
+      this.playMood('waiting');
+    } else {
+      // Browser Autoplay Policy compliance: attempt play immediately and attach gentle gesture listener
+      const resumeOnGesture = () => {
+        this.init();
+        this.resume();
+        if (!this.currentMood || this.currentMood === 'waiting') {
+          this.playMood('waiting');
+        }
+        window.removeEventListener('pointerdown', resumeOnGesture);
+        window.removeEventListener('touchstart', resumeOnGesture);
+        window.removeEventListener('keydown', resumeOnGesture);
+        window.removeEventListener('mousemove', resumeOnGesture);
+      };
+      window.addEventListener('pointerdown', resumeOnGesture, { passive: true });
+      window.addEventListener('touchstart', resumeOnGesture, { passive: true });
+      window.addEventListener('keydown', resumeOnGesture, { passive: true });
+      window.addEventListener('mousemove', resumeOnGesture, { passive: true });
+      this.playMood('waiting');
+    }
+  }
+
   // Crossfade music to a new mood
   playMood(mood) {
     if (this.currentMood === mood) return;
@@ -107,7 +139,8 @@ class AudioSystem {
     const cfg = window.BIRTHDAY_CONFIG ? window.BIRTHDAY_CONFIG.audio : null;
     let externalSrc = null;
     if (cfg) {
-      if (mood === 'page1' || mood === 'exit') externalSrc = cfg.openingMusic;
+      if (mood === 'waiting') externalSrc = cfg.waitingMusic || cfg.openingMusic;
+      else if (mood === 'page1' || mood === 'exit') externalSrc = cfg.openingMusic;
       else if (mood === 'pinata' || mood === 'reveal') externalSrc = cfg.pinataMusic;
       else if (mood === 'final') externalSrc = cfg.finalMusic;
     }
@@ -178,22 +211,35 @@ class AudioSystem {
       const chord = chordProg[chordIdx % chordProg.length];
       chordIdx++;
 
-      // Play soft pad chord
-      chord.forEach((freq, i) => {
-        this._playPluck(freq, 0.08, 2.5 + i * 0.4, (i % 2 === 0 ? 'sine' : 'triangle'), 0.02 * i);
-      });
+      if (mood === 'waiting') {
+        // Ethereal music-box bell chime arpeggios while waiting on the loading screen
+        chord.forEach((freq, i) => {
+          this._playPluck(freq * 1.5, 0.05, 1.8 + i * 0.3, 'sine', 0.03 * i);
+        });
+        for (let j = 0; j < 4; j++) {
+          setTimeout(() => {
+            const note = chord[Math.floor(Math.random() * chord.length)] * 2;
+            this._playPluck(note, 0.04, 1.3, 'sine', 0);
+          }, 450 * (j + 1));
+        }
+      } else {
+        // Play soft pad chord
+        chord.forEach((freq, i) => {
+          this._playPluck(freq, 0.08, 2.5 + i * 0.4, (i % 2 === 0 ? 'sine' : 'triangle'), 0.02 * i);
+        });
 
-      // Play gentle arpeggio notes
-      for (let j = 0; j < 3; j++) {
-        setTimeout(() => {
-          const note = chord[Math.floor(Math.random() * chord.length)] * 2;
-          this._playPluck(note, 0.06, 1.2, 'sine', 0);
-        }, 600 * (j + 1));
+        // Play gentle arpeggio notes
+        for (let j = 0; j < 3; j++) {
+          setTimeout(() => {
+            const note = chord[Math.floor(Math.random() * chord.length)] * 2;
+            this._playPluck(note, 0.06, 1.2, 'sine', 0);
+          }, 600 * (j + 1));
+        }
       }
     };
 
     playChordStep();
-    const intervalMs = mood === 'pinata' ? 2400 : 3600;
+    const intervalMs = mood === 'waiting' ? 2800 : (mood === 'pinata' ? 2400 : 3600);
     this.synthLoopInterval = setInterval(playChordStep, intervalMs);
   }
 

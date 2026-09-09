@@ -9,11 +9,34 @@
 </head>
 <body>
 
-  <!-- Audio Gate Overlay (Autoplay Policy Compliance) -->
+  <!-- Audio Gate & Asset Download Progress Overlay -->
   <div id="audio-gate-overlay">
     <div class="gate-content">
       <div class="gate-title">A Special Story</div>
-      <div class="gate-subtitle">Tap to begin ♡</div>
+      
+      <!-- Progress Bar Section (Active during download) -->
+      <div id="gate-loading-section" class="gate-loading-section">
+        <div class="gate-loading-label">
+          <span class="gate-loading-text">Loading magical memories...</span>
+          <span id="gate-loading-percent" class="gate-loading-percent">0%</span>
+        </div>
+        <div class="gate-progress-track">
+          <div id="gate-progress-bar" class="gate-progress-bar">
+            <span class="gate-progress-shimmer"></span>
+          </div>
+        </div>
+        <div id="gate-loading-bytes" class="gate-loading-bytes">Starting download...</div>
+      </div>
+
+      <!-- Let's Begin Section (Hidden until 100% downloaded) -->
+      <div id="gate-begin-section" class="gate-begin-section" style="display: none;">
+        <button id="btn-lets-begin" class="btn-lets-begin">
+          <span>✨</span> Let's Begin ♡
+        </button>
+        <div class="gate-begin-subtitle">Tap anywhere to begin the story</div>
+      </div>
+
+      <!-- Suggestions Container (Always permanently visible for the entire time) -->
       <div class="gate-hints-container">
         <div class="gate-audio-hint">
           <span class="gate-audio-icon">🎧</span>
@@ -320,6 +343,7 @@
   <!-- Script Modules in Strict Dependency Order -->
   <script src="config.js"></script>
   <script src="js/audio-system.js"></script>
+  <script src="js/preloader.js"></script>
   <script src="js/particle-system.js"></script>
   <script src="js/doraemon-physics.js"></script>
   <script src="js/characters/girl-character.js"></script>
