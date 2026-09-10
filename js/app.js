@@ -96,6 +96,34 @@ class BirthdayApp {
     this.scenes['gate'] = new window.GateScene(this);
     this.scenes['final'] = new window.FinalScene(this);
 
+    // Revisit Navigation Subsystem (Dropdown Quick-Jump)
+    this.revisitNavBar = document.getElementById('revisit-nav-bar');
+    this.revisitSceneName = document.getElementById('revisit-scene-name');
+    this.btnRevisitReturn = document.getElementById('btn-revisit-return');
+    this.btnRevisitContinue = document.getElementById('btn-revisit-continue');
+    this.isRevisitMode = false;
+
+    this.sceneTitles = {
+      'pinata': '🎮 The Fairytale Piñata Quest',
+      'exit': "🥺 Doraemon & Nobita's Heartfelt Realm",
+      'page2': '💌 The Scalloped Envelope & Love Letter',
+      'gate': '🗝️ The Sacred Baroque Gate',
+      'gallery': '🌸 The Polaroid Keepsake Gallery',
+      'final': '🎂 The Midnight Wish & Candle Ceremony'
+    };
+
+    if (this.btnRevisitReturn) {
+      this.btnRevisitReturn.addEventListener('click', () => {
+        this.returnToFinalFromRevisit();
+      });
+    }
+
+    if (this.btnRevisitContinue) {
+      this.btnRevisitContinue.addEventListener('click', () => {
+        this.continueNaturalFlowFromRevisit();
+      });
+    }
+
     // Mount initial scene: Page 1 or URL hash deep-link if specified
     const hashScene = window.location.hash ? window.location.hash.replace('#', '').trim() : '';
     if (hashScene && this.scenes[hashScene]) {
@@ -103,6 +131,56 @@ class BirthdayApp {
       this.goToScene(hashScene);
     } else {
       this.goToScene('page1');
+    }
+  }
+
+  jumpToSceneFromFinal(sceneId) {
+    if (!this.scenes[sceneId]) return;
+
+    this.isRevisitMode = true;
+    if (this.revisitSceneName) {
+      this.revisitSceneName.textContent = this.sceneTitles[sceneId] || sceneId;
+    }
+    if (this.revisitNavBar) {
+      this.revisitNavBar.style.display = 'flex';
+      this.revisitNavBar.classList.add('visible');
+    }
+
+    // Adjust audio to the target scene
+    if (this.audio) {
+      if (sceneId === 'pinata') this.audio.playMood('pinata');
+      else if (sceneId === 'exit' || sceneId === 'page1') this.audio.playMood('page1');
+      else if (sceneId === 'page2') this.audio.playMood('page2');
+      else if (sceneId === 'gate') this.audio.playMood('gate');
+      else if (sceneId === 'gallery') this.audio.playMood('gallery');
+      else if (sceneId === 'final') this.audio.playMood('final');
+    }
+
+    this.goToScene(sceneId);
+  }
+
+  returnToFinalFromRevisit() {
+    this.isRevisitMode = false;
+    if (this.revisitNavBar) {
+      this.revisitNavBar.style.display = 'none';
+      this.revisitNavBar.classList.remove('visible');
+    }
+
+    if (this.audio) {
+      this.audio.playMood('final');
+    }
+
+    this.goToScene('final');
+    if (this.scenes['final'] && typeof this.scenes['final'].restoreFinalState === 'function') {
+      this.scenes['final'].restoreFinalState();
+    }
+  }
+
+  continueNaturalFlowFromRevisit() {
+    this.isRevisitMode = false;
+    if (this.revisitNavBar) {
+      this.revisitNavBar.style.display = 'none';
+      this.revisitNavBar.classList.remove('visible');
     }
   }
 
@@ -135,6 +213,12 @@ class BirthdayApp {
 
   // Full reset for "Experience Again" (Specs 44 & 56)
   resetAllAndGoToOpening() {
+    this.isRevisitMode = false;
+    if (this.revisitNavBar) {
+      this.revisitNavBar.style.display = 'none';
+      this.revisitNavBar.classList.remove('visible');
+    }
+
     // Reset all scene states
     Object.values(this.scenes).forEach(s => {
       if (typeof s.resetScene === 'function') s.resetScene();
@@ -145,7 +229,10 @@ class BirthdayApp {
       window.birthdayParticles.setMode('ambient');
     }
 
-    this.audio.playMood('page1');
+    if (this.audio) {
+      this.audio.currentPortion = null;
+      this.audio.playMood('page1');
+    }
     this.goToScene('page1');
   }
 }

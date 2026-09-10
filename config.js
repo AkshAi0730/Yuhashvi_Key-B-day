@@ -18,7 +18,7 @@ window.BIRTHDAY_CONFIG = {
   // PAGE 1: OPENING SCENE
   // ==========================================
   page1: {
-    question: "How are you doing in your Favorite and special day of your life",
+    question: "How are you doing in your Favorite and special day of your life ?",
     btnWishAccepted: "Wish Accepted",
     btnExit: "Exit"
   },
@@ -27,8 +27,9 @@ window.BIRTHDAY_CONFIG = {
   // EXIT SCENE: DORAEMON & NOBITA
   // ==========================================
   exitScene: {
-    title: "Are you sure wanna leave?",
-    btnReconsider: "Let's reconsider"
+    title: "Are you truly ready to leave this behind?",
+    btnReconsider: "Let's See where things go",
+    btnLeave: "Yes, go to final page"
   },
 
   // ==========================================
@@ -45,7 +46,7 @@ window.BIRTHDAY_CONFIG = {
     hit4Text: "CRACK!",
     revealLine1: "Happy Birthday",
     revealLine2: "Yuhashvi ♡",
-    btnContinueToPage2: "I have something for you"
+    btnContinueToPage2: "something for you"
   },
 
   // ==========================================
@@ -55,15 +56,28 @@ window.BIRTHDAY_CONFIG = {
     introHeader: "Since today is your special day...",
     
     // [ADD LITTLE SOMETHING FOR YOU MESSAGE]
-    littleSomethingMessage: "[ADD LITTLE SOMETHING FOR YOU MESSAGE]",
+    littleSomethingMessage: "To the one who turned second chances into something sacred",
 
     envelopeLabel: "For Yuhashvi ♡",
     btnOpenEnvelope: "Open Your Envelope",
 
     // [ADD ENVELOPE TEXT]
-    envelopeText: "[ADD ENVELOPE TEXT]",
+// [ADD ENVELOPE TEXT]
+  envelopeText: `Happy 21st Birthday! ✨🎂
 
-    btnContinueToPhotos: "Continue"
+First time naan unna paaththa antha moment still unforgerttable 🥹. Antha cute nosepin, athooda antha angry look... a pure magic, enna straight ah moon kke kuutti pona maari oru feel create pannichchu 🌙✨. Naan ninaikkave illa naama ipdi oru nalla vibe kku set aavom endu 🤍.
+
+Honest ah solla pona, en life la eppayum eh nee romba special thaan. Thanks a lot for simply being you 🌸.
+
+Nee oru thadava sonna, contrast taste iruntha life kku set aahaathu nnu. But life la eppavum perfect ah irukkurathu mattum love illa. Nammaloda insecurities, imperfections, downfalls appayum "enakku nee thaan" nnu oruthar pakkathula nikkirathu than true love 💫. Same shade ah vida, eppayum contrast colour combo thaan best ah match aahum.
+
+Sari however, from today onwards you are officially 21! 🎉 So ini un perspectives rombave change aahalaam. Un aasa padi unakku KDU la admission kidaikkum, will pray for you 🩺✨. The way nee ovvoru person ayum care pandrathu, un character and all are genuinely top notch 👏.
+
+Chumma oru small note thaan ithu 💌. Intha lines un face la oru chinna spark ah create panni irrukkum endu namburan... but atha paakka thaan enakku kidaikkala 🙃.
+
+Wish you a very happy, peaceful life ahead. Have an amazing day! 🤍✨`,
+
+  btnContinueToPhotos: "Continue"
   },
 
   // ==========================================
@@ -78,25 +92,25 @@ window.BIRTHDAY_CONFIG = {
       {
         id: "photo-01",
         src: "assets/images/photo_01.jpg",
-        caption: "[ADD PHOTO CAPTION]",
+        caption: "There was always an unspoken wonder there—one look, and I was entirely undone",
         rotation: -4
       },
       {
         id: "photo-02",
         src: "assets/images/photo_02.jpg",
-        caption: "[ADD PHOTO CAPTION]",
+        caption: "My first sight at sunrise, my last thought under the stars",
         rotation: 3
       },
       {
         id: "photo-03",
         src: "assets/images/photo_03.jpg",
-        caption: "[ADD PHOTO CAPTION]",
+        caption: "Two quiet wonders face to face—one sewn of cotton, the other made of pure grace",
         rotation: -2
       },
       {
         id: "photo-04",
         src: "assets/images/photo_04.jpg",
-        caption: "[ADD PHOTO CAPTION]",
+        caption: "Tied with ribbon and sweet nostalgia, blooming in the very shade of your softness",
         rotation: 4
       }
     ],
@@ -123,7 +137,7 @@ window.BIRTHDAY_CONFIG = {
     titleLine2: "Yuhashvi ♡",
 
     // [ADD FINAL MESSAGE]
-    finalMessage: "[ADD FINAL MESSAGE]",
+    finalMessage: "The world needs a doctor with a heart like yours. Go get it.",
 
     btnOneLastThing: "One Last Thing",
     keepSmilingText: "Keep smiling. ♡",
@@ -132,15 +146,18 @@ window.BIRTHDAY_CONFIG = {
 
   // ==========================================
   // AUDIO CONFIGURATION
-  // Placeholders for user audio files:
-  // opening.mp3, exit.mp3, pinata.mp3, final.mp3
-  // If empty, the built-in procedural Web Audio synthesizer plays smoothly.
+  // 4 Divided Portions (Mild sound ~20% volume):
+  // 1. Opening: From "Let's Begin" until Piñata Game appears
+  // 2. Piñata Game: Separate energetic track throughout piñata game
+  // 3. The Letter: Peaceful soundtrack for envelope & letter reading
+  // 4. Gate, Gallery & Cake: ONE shared soundtrack continuing across Gate, Gallery & Final scene!
   // ==========================================
   audio: {
-    openingMusic: "", // [ADD OPENING MUSIC]
-    exitMusic: "",    // [ADD EXIT MUSIC]
-    pinataMusic: "",  // [ADD PINATA MUSIC]
-    finalMusic: "",   // [ADD FINAL MUSIC]
-    defaultVolume: 0.48 // 40-50% volume target
+    openingMusic: "assets/audio/opening.mp3",              // Portion 1: Opening & Exit
+    pinataMusic: "assets/audio/pinata.mp3",                // Portion 2: Piñata Game
+    letterMusic: "assets/audio/letter_gallery.mp3",        // Portion 3: The Letter & Envelope
+    letterGalleryMusic: "assets/audio/letter_gallery.mp3", // Backward compatibility alias
+    finalMusic: "assets/audio/final.mp3",                  // Portion 4: Gate, Gallery & Cake scene
+    defaultVolume: 0.20                                    // Mild volume level (~20%)
   }
 };

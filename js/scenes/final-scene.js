@@ -27,6 +27,7 @@ class FinalScene {
     this.messageEl = document.getElementById('final-message');
     this.smilingTextEl = document.getElementById('final-smiling-text');
     this.btnExperienceAgain = document.getElementById('btn-experience-again');
+    this.sceneJumpSelect = document.getElementById('scene-jump-select');
 
     this.isBlown = false;
 
@@ -54,16 +55,47 @@ class FinalScene {
         });
       }
     }
+
+    // Scene Jump Dropdown
+    if (this.sceneJumpSelect) {
+      this.sceneJumpSelect.addEventListener('change', (e) => {
+        const targetScene = e.target.value;
+        if (targetScene) {
+          this.app.jumpToSceneFromFinal(targetScene);
+          this.sceneJumpSelect.selectedIndex = 0;
+        }
+      });
+    }
+  }
+
+  restoreFinalState() {
+    this.isBlown = true;
+    if (this.btnBlow) this.btnBlow.style.display = 'none';
+    if (this.candleFlame1) this.candleFlame1.classList.add('extinguished');
+    if (this.candleFlame2) this.candleFlame2.classList.add('extinguished');
+    if (this.smokeWisps) this.smokeWisps.classList.remove('active');
+    if (this.starsLayer) this.starsLayer.style.opacity = '1';
+    if (this.messageCard) {
+      this.messageCard.style.display = 'block';
+      this.messageCard.style.opacity = '1';
+      this.messageCard.style.transition = 'none';
+    }
   }
 
   enter() {
     this.resetScene();
+    this.sceneActive = true;
+    if (this.app && this.app.audio) {
+      this.app.audio.playMood('final');
+    }
     if (window.birthdayParticles) {
       window.birthdayParticles.setMode('ambient');
     }
   }
 
-  leave() {}
+  leave() {
+    this.sceneActive = false;
+  }
 
   resetScene() {
     this.isBlown = false;
@@ -101,6 +133,7 @@ class FinalScene {
       this.btnBlow.style.transition = 'opacity 0.4s ease';
       this.btnBlow.style.opacity = '0';
       setTimeout(() => {
+        if (!this.sceneActive) return;
         this.btnBlow.style.display = 'none';
       }, 400);
     }
@@ -110,24 +143,28 @@ class FinalScene {
     if (this.breathStream) {
       this.breathStream.classList.add('active');
       setTimeout(() => {
+        if (!this.sceneActive) return;
         if (this.breathStream) this.breathStream.classList.remove('active');
       }, 800);
     }
 
     // 3. Extinguish candle flames & rise smoke curls
     setTimeout(() => {
+      if (!this.sceneActive) return;
       if (this.candleFlame1) this.candleFlame1.classList.add('extinguished');
       if (this.candleFlame2) this.candleFlame2.classList.add('extinguished');
       if (this.smokeWisps) this.smokeWisps.classList.add('active');
 
       // 4. Smoothly crossfade from lit night scene to starry celestial midnight sky
       setTimeout(() => {
+        if (!this.sceneActive) return;
         if (this.starsLayer) {
           this.starsLayer.style.opacity = '1';
         }
 
         // 5. Reveal celebratory message card with [ADD FINAL MESSAGE], "Keep smiling. ♡", and replay button
         setTimeout(() => {
+          if (!this.sceneActive) return;
           if (this.messageCard) {
             this.messageCard.style.display = 'block';
             this.messageCard.style.opacity = '0';

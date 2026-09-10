@@ -16,6 +16,7 @@ class ExitScene {
     this.el = document.getElementById('scene-exit');
     this.questionEl = document.getElementById('exit-question');
     this.btnReconsider = document.getElementById('btn-reconsider');
+    this.btnLeave = document.getElementById('btn-exit-to-final');
     this.happyCharImg = document.getElementById('exit-char-happy');
     this.boundOnMouseMove = this.onMouseMove.bind(this);
 
@@ -30,6 +31,9 @@ class ExitScene {
     if (cfg && this.btnReconsider) {
       this.btnReconsider.innerHTML = `<span>🥺</span> ${cfg.btnReconsider}`;
     }
+    if (cfg && this.btnLeave) {
+      this.btnLeave.innerHTML = `<span>🚪</span> ${cfg.btnLeave || 'Yes, go to final page'}`;
+    }
 
     if (this.btnReconsider) {
       this.btnReconsider.addEventListener('click', () => {
@@ -42,6 +46,14 @@ class ExitScene {
       this.btnReconsider.addEventListener('touchstart', () => {
         this.setHappiness(1.0);
       }, { passive: true });
+    }
+
+    if (this.btnLeave) {
+      this.btnLeave.addEventListener('click', () => {
+        // Stop ongoing page completely, switch audio to final, and move to final page
+        this.app.audio.playMood('final');
+        this.app.goToScene('final');
+      });
     }
   }
 

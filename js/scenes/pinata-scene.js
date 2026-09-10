@@ -82,14 +82,25 @@ class PinataScene {
 
   enter() {
     this.resetScene();
+    this.sceneActive = true;
     this.startStorySequence();
   }
 
   leave() {
+    this.sceneActive = false;
     window.removeEventListener('mousemove', this.boundMouseMove);
     window.removeEventListener('touchmove', this.boundTouchMove);
-    if (this.physicsRaf) cancelAnimationFrame(this.physicsRaf);
+    if (this.physicsRaf) {
+      cancelAnimationFrame(this.physicsRaf);
+      this.physicsRaf = null;
+    }
     this.isInteractive = false;
+    this.isHitting = false;
+
+    // Immediately stop & reset character states
+    if (this.girl) this.girl.reset();
+    if (this.boy) this.boy.reset();
+    if (this.doraemon) this.doraemon.reset();
   }
 
   resetScene() {
@@ -136,19 +147,26 @@ class PinataScene {
 
   // Sequenced Story Arc (Specs 19 - 41)
   startStorySequence() {
+    if (!this.sceneActive) return;
     // 1. Girl enters walking from RIGHT to LEFT, stopping directly at her hitting stance beside piñata
     const isMobile = window.innerWidth <= 900;
     const hitX = Math.round(window.innerWidth / 2 - (isMobile ? 150 : 210));
 
     setTimeout(() => {
+      if (!this.sceneActive) return;
       this.girl.walkTo(hitX, 4000, () => {
+        if (!this.sceneActive) return;
         // 2. Girl stops directly at her hitting position beside piñata and looks up
         setTimeout(() => {
+          if (!this.sceneActive) return;
           this.girl.lookUp(() => {
+            if (!this.sceneActive) return;
             // 3. Boy peeks from left, reacts, and throws baseball bat safely to the RIGHT side of the girl on the grass
             setTimeout(() => {
+              if (!this.sceneActive) return;
               const safeLandingX = Math.round(hitX + (isMobile ? 120 : 155)); // Right side of the girl!
               this.boy.performThrowSequence(safeLandingX, () => {
+                if (!this.sceneActive) return;
                 // Comic BAM! sound & visual effect on girl's right
                 this.app.audio.playBam();
                 if (this.bamEffect) {
@@ -156,14 +174,20 @@ class PinataScene {
                   this.bamEffect.style.left = `${safeLandingX - 10}px`;
                   this.bamEffect.style.bottom = '110px';
                   this.bamEffect.classList.add('pop');
-                  setTimeout(() => this.bamEffect.classList.remove('pop'), 700);
+                  setTimeout(() => {
+                    if (this.bamEffect) this.bamEffect.classList.remove('pop');
+                  }, 700);
                 }
               }, () => {
+                if (!this.sceneActive) return;
                 // 4. Girl notices bat on her right, bends down, picks it up, stands up in stance
                 setTimeout(() => {
+                  if (!this.sceneActive) return;
                   this.girl.pickUpBat(() => {
+                    if (!this.sceneActive) return;
                     // 5. Girl tries 3 jumping swings that miss (relaxed pacing)
                     setTimeout(() => {
+                      if (!this.sceneActive) return;
                       this.executeMissJumps();
                     }, 700);
                   });
@@ -178,19 +202,27 @@ class PinataScene {
 
   // 3 Jumping Misses with crouching, jumping, swinging, and confusion
   executeMissJumps() {
+    if (!this.sceneActive) return;
     // Miss 1
     this.app.audio.playWhoosh();
     this.girl.jumpAndSwing(70, false, null, () => {
+      if (!this.sceneActive) return;
       this.girl.showConfusion(() => {
+        if (!this.sceneActive) return;
         // Miss 2
         setTimeout(() => {
+          if (!this.sceneActive) return;
           this.app.audio.playWhoosh();
           this.girl.jumpAndSwing(85, false, null, () => {
+            if (!this.sceneActive) return;
             this.girl.showConfusion(() => {
+              if (!this.sceneActive) return;
               // Miss 3 (still too high!)
               setTimeout(() => {
+                if (!this.sceneActive) return;
                 this.app.audio.playWhoosh();
                 this.girl.jumpAndSwing(95, false, null, () => {
+                  if (!this.sceneActive) return;
                   // Speech bubble: "Help me! 🥺"
                   if (this.speechBubble) {
                     this.speechBubble.textContent = "Help me! 🥺";
@@ -199,13 +231,14 @@ class PinataScene {
 
                   // Shooting star arrives to unlock interactive control
                   setTimeout(() => {
+                    if (!this.sceneActive) return;
                     this.triggerHelpArrival();
-                  }, 1800);
+                  }, 1200);
                 });
-              }, 650);
+              }, 600);
             });
           });
-        }, 650);
+        }, 600);
       });
     });
   }

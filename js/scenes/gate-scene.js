@@ -37,12 +37,18 @@ class GateScene {
 
   enter() {
     this.resetScene();
+    this.sceneActive = true;
+    if (this.app && this.app.audio) {
+      this.app.audio.playMood('gate');
+    }
     if (window.birthdayParticles) {
       window.birthdayParticles.setMode('ambient');
     }
   }
 
-  leave() {}
+  leave() {
+    this.sceneActive = false;
+  }
 
   resetScene() {
     this.isUnlocked = false;
@@ -98,6 +104,7 @@ class GateScene {
 
     // 2. Key inserts and rotates 90 degrees
     setTimeout(() => {
+      if (!this.sceneActive) return;
       if (this.keyProp) {
         this.keyProp.style.transition = 'transform 0.4s ease';
         this.keyProp.style.transform = 'translate(0px, 2px) rotate(90deg)';
@@ -106,6 +113,7 @@ class GateScene {
 
       // 3. Lock releases & drops open with sparkle burst
       setTimeout(() => {
+        if (!this.sceneActive) return;
         this.app.audio.playConfettiPop();
         if (window.birthdayParticles) {
           const rect = this.padlockAssembly ? this.padlockAssembly.getBoundingClientRect() : null;
@@ -125,11 +133,13 @@ class GateScene {
           this.keyProp.style.opacity = '0';
         }
         setTimeout(() => {
+          if (!this.sceneActive) return;
           if (this.padlockAssembly) this.padlockAssembly.style.display = 'none';
         }, 550);
 
         // 4. Both gate panels physically swing open in 3D perspective (Rule #30)
         setTimeout(() => {
+          if (!this.sceneActive) return;
           if (this.doorLeft) {
             this.doorLeft.style.transition = 'transform 1.9s cubic-bezier(0.2, 0.8, 0.25, 1)';
             this.doorLeft.style.transform = 'perspective(1200px) rotateY(-82deg)';
@@ -142,10 +152,11 @@ class GateScene {
             this.el.classList.add('doors-open');
           }
 
-          // 5. Camera glides forward through the opening into Final Night Scene
+          // 5. Camera glides forward through the opening into the Polaroid Gallery
           setTimeout(() => {
-            this.app.audio.playMood('final');
-            this.app.goToScene('final');
+            if (!this.sceneActive) return;
+            this.app.audio.playMood('gallery');
+            this.app.goToScene('gallery');
           }, 2400);
         }, 500);
       }, 550);

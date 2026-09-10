@@ -15,8 +15,10 @@ class AudioSystem {
     this.masterGain = null;
     this.musicGain = null;
     this.sfxGain = null;
-    this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.48;
+    this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.20;
     this.currentAudioElement = null;
+    this.currentAudioSrc = null;
+    this.currentPortion = null;
 
     // Musical scale frequencies for generative synthesizer (Pentatonic Major / Lydian)
     this.chords = {
@@ -68,6 +70,8 @@ class AudioSystem {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioContext();
 
+      this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.20;
+
       // Master Gain
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.setValueAtTime(this.targetVolume, this.ctx.currentTime);
@@ -79,7 +83,7 @@ class AudioSystem {
       this.musicGain.connect(this.masterGain);
 
       this.sfxGain = this.ctx.createGain();
-      this.sfxGain.gain.setValueAtTime(0.8, this.ctx.currentTime);
+      this.sfxGain.gain.setValueAtTime(0.4, this.ctx.currentTime);
       this.sfxGain.connect(this.masterGain);
     } catch (e) {
       console.warn("Web Audio API not supported or blocked", e);
@@ -102,6 +106,28 @@ class AudioSystem {
       this.currentAudioElement.muted = this.isMuted;
     }
     return this.isMuted;
+  }
+
+  // Map any scene mood to its corresponding 4-portion soundtrack category
+  getMoodPortion(mood) {
+    if (!mood) return 'opening';
+    // 1. Opening music: lets begin through page1 & exit until pinata game appears
+    if (mood === 'waiting' || mood === 'page1' || mood === 'exit' || mood === 'opening') {
+      return 'opening';
+    }
+    // 2. Piñata game soundtrack: separate track throughout entire pinata scene
+    if (mood === 'pinata' || mood === 'reveal') {
+      return 'pinata';
+    }
+    // 3. The Letter soundtrack: page2 envelope & letter reading
+    if (mood === 'page2' || mood === 'envelope' || mood === 'letter') {
+      return 'letter';
+    }
+    // 4. Gate, Gallery & Cake scene: ALL THREE share the exact same sound track
+    if (mood === 'gate' || mood === 'gallery' || mood === 'final') {
+      return 'final';
+    }
+    return mood;
   }
 
   // Play waiting music on the first page / loading screen
@@ -130,64 +156,99 @@ class AudioSystem {
     }
   }
 
-  // Crossfade music to a new mood
+  // Crossfade music to a new mood with strict portion continuity
   playMood(mood) {
-    if (this.currentMood === mood) return;
+    const portion = this.getMoodPortion(mood);
+
+    // Continuity guard: if this exact portion is already actively playing, DO NOT restart or interrupt!
+    if (this.currentPortion === portion && this.currentAudioElement && !this.currentAudioElement.paused) {
+      this.currentMood = mood;
+      return;
+    }
+
+    this.currentPortion = portion;
     this.currentMood = mood;
 
-    // Check if user specified external audio file
+    // Retrieve portion track from configuration
     const cfg = window.BIRTHDAY_CONFIG ? window.BIRTHDAY_CONFIG.audio : null;
     let externalSrc = null;
     if (cfg) {
-      if (mood === 'waiting') externalSrc = cfg.waitingMusic || cfg.openingMusic;
-      else if (mood === 'page1' || mood === 'exit') externalSrc = cfg.openingMusic;
-      else if (mood === 'pinata' || mood === 'reveal') externalSrc = cfg.pinataMusic;
-      else if (mood === 'final') externalSrc = cfg.finalMusic;
+      if (portion === 'opening') externalSrc = cfg.openingMusic;
+      else if (portion === 'pinata') externalSrc = cfg.pinataMusic;
+      else if (portion === 'letter') externalSrc = cfg.letterMusic || cfg.letterGalleryMusic;
+      else if (portion === 'final') externalSrc = cfg.finalMusic;
     }
 
     if (externalSrc && externalSrc.trim() !== '') {
-      this._playExternalAudio(externalSrc);
+      this._playExternalAudio(externalSrc, portion, mood);
     } else {
       this._startProceduralMusic(mood);
     }
   }
 
-  _playExternalAudio(src) {
+  _playExternalAudio(src, portion, mood) {
+    // If the exact same audio file is already active and playing, keep it playing
+    if (this.currentAudioElement && this.currentAudioSrc === src && !this.currentAudioElement.paused) {
+      return;
+    }
+
     this._stopProceduralMusic();
+
     if (this.currentAudioElement) {
-      // Fade out old element
+      // Fade out previous audio element smoothly
       const old = this.currentAudioElement;
       let vol = old.volume;
       const fadeInterval = setInterval(() => {
-        vol -= 0.05;
+        vol -= 0.04;
         if (vol <= 0) {
           clearInterval(fadeInterval);
           old.pause();
         } else {
           old.volume = Math.max(0, vol);
         }
-      }, 50);
+      }, 40);
     }
 
-    const audio = new Audio(src);
+    // Reuse pre-buffered opening audio element from preloader if available
+    let audio = null;
+    if (portion === 'opening' && window.preloadedOpeningAudio) {
+      audio = window.preloadedOpeningAudio;
+    } else {
+      audio = new Audio(src);
+    }
+
     audio.loop = true;
     audio.volume = 0;
     audio.muted = this.isMuted;
-    audio.play().then(() => {
-      // Fade in new audio
-      let vol = 0;
-      const fadeIn = setInterval(() => {
-        vol += 0.02;
-        if (vol >= this.targetVolume) {
-          clearInterval(fadeIn);
-          audio.volume = this.targetVolume;
-        } else {
-          audio.volume = vol;
-        }
-      }, 50);
-    }).catch(e => console.log("Audio play blocked", e));
-
+    this.currentAudioSrc = src;
     this.currentAudioElement = audio;
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // Fade in new audio up to mild target volume (~0.20)
+        let vol = 0;
+        const target = this.targetVolume || 0.20;
+        const fadeIn = setInterval(() => {
+          vol += 0.02;
+          if (vol >= target) {
+            clearInterval(fadeIn);
+            audio.volume = target;
+          } else {
+            audio.volume = vol;
+          }
+        }, 40);
+      }).catch(e => {
+        console.log("Audio play blocked or file not found, falling back to procedural synth", e);
+        this._startProceduralMusic(mood || 'page1');
+      });
+    }
+
+    // Resilience fallback if external file is missing
+    audio.addEventListener('error', () => {
+      console.log("External audio track not found at: " + src + ". Playing dreamy generative synth.");
+      this._startProceduralMusic(mood || 'envelope');
+    }, { once: true });
   }
 
   _stopProceduralMusic() {

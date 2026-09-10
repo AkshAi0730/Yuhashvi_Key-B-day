@@ -1433,9 +1433,11 @@ html, body {
   left: 20px;
   right: 20px;
   height: 120px;
-  background: #fcf9f2;
-  background-image: radial-gradient(#eadbc2 0.65px, transparent 0.65px);
-  background-size: 14px 14px;
+  background: #fdfbf7;
+  background-image: 
+    linear-gradient(rgba(235, 222, 205, 0.22) 1px, transparent 1px),
+    radial-gradient(#eadbc2 0.75px, transparent 0.75px);
+  background-size: 100% 28px, 16px 16px;
   border: 1.5px solid #dfc79b;
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
@@ -1445,39 +1447,83 @@ html, body {
   text-align: left;
   opacity: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .letter-paper.risen {
-  transform: translateY(-120px);
-  height: auto;
-  min-height: 180px;
-  width: 450px;
-  max-width: 90vw;
+  transform: translate(-50%, -135px);
+  height: 390px;
+  max-height: 56vh;
+  width: min(520px, 92vw);
   left: 50%;
-  margin-left: -225px;
+  margin-left: 0;
   z-index: 20;
   opacity: 1;
   pointer-events: auto;
+  cursor: auto;
+  user-select: text;
   box-shadow: 0 20px 48px rgba(150, 70, 90, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.9) inset;
   border: 2px solid #d4af37;
+  border-radius: 12px;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 24px 18px 24px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: #c59b27 rgba(242, 234, 222, 0.65);
+}
+
+/* Word Document-Style Custom Scrollbar */
+.letter-paper.risen::-webkit-scrollbar {
+  width: 10px;
+}
+
+.letter-paper.risen::-webkit-scrollbar-track {
+  background: rgba(242, 234, 222, 0.65);
+  border-left: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 0 10px 10px 0;
+}
+
+.letter-paper.risen::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d4af37 0%, #aa8024 100%);
+  border-radius: 6px;
+  border: 2px solid #fdfbf7;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.letter-paper.risen::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #e5be48 0%, #b8860b 100%);
+}
+
+.letter-paper.risen::-webkit-scrollbar-thumb:active {
+  background: #996515;
 }
 
 @media (max-width: 480px) {
   .envelope-interactive-wrap {
-    width: 90vw;
+    width: 92vw;
   }
   .letter-paper.risen {
-    width: 90vw;
-    margin-left: -45vw;
+    width: 92vw;
+    height: 330px;
+    max-height: 50vh;
+    left: 50%;
+    margin-left: 0;
+    transform: translate(-50%, -105px);
+    padding: 18px 14px 18px 20px;
   }
 }
 
 .letter-text-content {
-  font-family: var(--font-serif);
-  font-size: 16px;
+  font-family: 'Harlow Solid Italic', 'Harlow Solid', 'Alex Brush', cursive, sans-serif;
+  font-size: 20px;
   line-height: 1.75;
+  letter-spacing: 0.3px;
   color: #3e262f;
   white-space: pre-line;
+  word-break: break-word;
+  user-select: text;
 }
 
 /* ==========================================================================
@@ -1809,7 +1855,7 @@ html, body {
   position: relative;
   width: 90vw;
   max-width: 880px;
-  aspect-ratio: 966 / 830;
+  aspect-ratio: 934 / 825;
   max-height: 85vh;
   margin: auto;
   perspective: 1400px;
@@ -1827,8 +1873,8 @@ html, body {
 .gate-pillar {
   position: absolute;
   bottom: 0;
-  height: 96.38%;
-  width: 18.12%;
+  height: 94.06%;
+  width: 16.38%;
   object-fit: fill;
   z-index: 7;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.7));
@@ -1846,8 +1892,8 @@ html, body {
 .gate-doors-viewport {
   position: absolute;
   bottom: 0;
-  left: 18.12%;
-  width: 63.76%;
+  left: 16.38%;
+  width: 67.24%;
   height: 100%;
   display: flex;
   perspective: 1200px;
@@ -2212,9 +2258,12 @@ html, body {
   }
 
   .letter-paper.risen {
-    width: 300px;
-    left: 10px;
-    height: 250px;
+    width: 90vw;
+    height: 310px;
+    max-height: 48vh;
+    left: 50%;
+    margin-left: 0;
+    transform: translate(-50%, -100px);
   }
 
   .polaroid-card {
@@ -2345,3 +2394,203 @@ html, body {
     height: 68px;
   }
 }
+
+/* ==========================================================================
+   SCENE QUICK-JUMP DROPDOWN (Final Scene Revisit Menu)
+   ========================================================================== */
+.scene-jump-container {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 215, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.scene-jump-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #ffd885;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.scene-jump-select-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+
+.scene-jump-select {
+  width: 100%;
+  background: rgba(28, 16, 42, 0.92);
+  border: 1.5px solid #dfb13f;
+  border-radius: 22px;
+  color: #fff9e6;
+  padding: 8px 36px 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 10px rgba(223, 177, 63, 0.25);
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+.scene-jump-select-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #dfb13f;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.scene-jump-select:hover {
+  border-color: #ffd700;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 215, 0, 0.45);
+}
+
+.scene-jump-select:focus {
+  border-color: #ffe066;
+  box-shadow: 0 0 0 2px rgba(255, 224, 102, 0.35);
+}
+
+.scene-jump-select option {
+  background: #1b1028;
+  color: #fff;
+  padding: 8px;
+}
+
+/* ==========================================================================
+   REVISIT NAVIGATION HUD (Floating Top Navigation Bar)
+   ========================================================================== */
+.revisit-nav-bar {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(22, 12, 38, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 215, 0, 0.65);
+  border-radius: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(255, 215, 0, 0.3);
+  animation: slideDownRevisit 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownRevisit {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.revisit-nav-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.revisit-nav-badge {
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.revisit-scene-name {
+  color: #fff8e8;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+.revisit-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-revisit {
+  padding: 6px 14px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: transform 0.25s, box-shadow 0.25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.btn-revisit-return {
+  background: linear-gradient(135deg, #c53056, #801431);
+  color: #fff;
+  border: 1px solid #ffd180;
+  box-shadow: 0 4px 12px rgba(180, 40, 75, 0.35);
+}
+
+.btn-revisit-return:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(220, 50, 90, 0.5);
+}
+
+.btn-revisit-continue {
+  background: linear-gradient(135deg, #2b6cb0, #1a365d);
+  color: #fff;
+  border: 1px solid #90cdf4;
+  box-shadow: 0 4px 12px rgba(43, 108, 176, 0.35);
+}
+
+.btn-revisit-continue:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(66, 153, 225, 0.5);
+}
+
+@media (max-width: 768px) {
+  .revisit-nav-bar {
+    top: 10px;
+    padding: 6px 12px;
+    gap: 8px;
+    width: 92vw;
+    justify-content: space-between;
+  }
+  .revisit-scene-name {
+    font-size: 11px;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .btn-revisit {
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+}
+

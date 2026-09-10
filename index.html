@@ -94,9 +94,14 @@
           <img src="assets/images/exit_doraemon_happy.jpg" id="exit-char-happy" class="exit-char-img exit-char-happy" alt="Doraemon and Nobita happy" />
         </div>
         <h2 id="exit-question" class="exit-question">Are you sure wanna leave?</h2>
-        <button id="btn-reconsider" class="btn-story btn-dark">
-          <span>🥺</span> Let's reconsider
-        </button>
+        <div class="exit-actions-wrap" style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+          <button id="btn-reconsider" class="btn-story btn-dark">
+            <span>🥺</span> Let's reconsider
+          </button>
+          <button id="btn-exit-to-final" class="btn-story btn-primary">
+            <span>🚪</span> Yes, go to final page
+          </button>
+        </div>
         <div class="proximity-hint">(Move closer to make them smile ✨)</div>
       </div>
     </section>
@@ -200,34 +205,12 @@
         <button id="btn-open-envelope" class="btn-story btn-primary">
           <span>💌</span> Open Your Envelope
         </button>
-        <button id="btn-continue-photos" class="btn-story" style="display: none; margin-top: 18px;">
-          <span>🌸</span> Continue
+        <button id="btn-continue-gate" class="btn-story btn-primary" style="display: none; margin-top: 18px;">
+          <span>🗝️</span> Approach the Baroque Gate
         </button>
       </div>
-    </section>
 
-    <!-- ====================================================================
-         SCENE 5: PHOTO GALLERY & NOBITA CHASE (Replaces hidden Doraemon)
-         - 4 Polaroid cards of Yuhashvi (her pictures)
-         - Chibi Nobita running along lower safe lane with "Catch me"
-         - Generous tap hitbox -> Hands over Golden Heart Key
-         ==================================================================== -->
-    <section id="scene-gallery" class="scene">
-      <div class="gallery-container">
-        <h2 id="gallery-heading" class="gallery-heading">
-          A few pictures of someone who deserves a beautiful day ♡
-        </h2>
-        <div id="polaroid-grid" class="polaroid-grid"></div>
-
-        <!-- Nobita Key Handoff Progression Prompt -->
-        <div id="gallery-progress-wrap" class="gallery-progress-wrap">
-          <button id="btn-proceed-gate" class="btn-story btn-primary" style="display: none;">
-            <span>✨</span> Approach the Golden Gate
-          </button>
-        </div>
-      </div>
-
-      <!-- Lower Safe Lane: Running Chibi Nobita with Generous Hitbox (Tightly grouped) -->
+      <!-- Lower Safe Lane: Running Chibi Nobita with Generous Hitbox -->
       <div id="nobita-chase-container" class="nobita-chase-container" title="Catch Nobita!">
         <div class="nobita-single-unit">
           <div id="nobita-speech-bubble" class="nobita-speech-bubble">Catch me! 🏃‍♂️</div>
@@ -239,7 +222,7 @@
       </div>
 
       <!-- Golden Key Handoff Choice Modal (Floats to middle on Catch) -->
-      <div id="gallery-key-modal" class="gallery-key-modal">
+      <div id="page2-key-modal" class="gallery-key-modal">
         <div class="key-modal-card">
           <div id="floating-center-key" class="floating-center-key">
             <img src="assets/images/golden_heart_key.png" alt="Golden Heart Key" />
@@ -250,10 +233,31 @@
             <button id="btn-gate-immediate" class="btn-story btn-primary">
               <span>✨</span> Approach the Gate Immediately
             </button>
-            <button id="btn-stay-gallery" class="btn-story btn-secondary">
+            <button id="btn-stay-page2" class="btn-story btn-secondary">
               <span>🌸</span> Let's stay here a little more
             </button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 5: PHOTO GALLERY (Appears AFTER the Baroque Gate opens!)
+         - 4 Polaroid cards of Yuhashvi (her pictures)
+         - Proceed button leads to the Final Midnight Cake Ceremony
+         ==================================================================== -->
+    <section id="scene-gallery" class="scene">
+      <div class="gallery-container">
+        <h2 id="gallery-heading" class="gallery-heading">
+          A few pictures of someone who deserves a beautiful day ♡
+        </h2>
+        <div id="polaroid-grid" class="polaroid-grid"></div>
+
+        <!-- Continue to Final Birthday Wish -->
+        <div id="gallery-progress-wrap" class="gallery-progress-wrap">
+          <button id="btn-proceed-final" class="btn-story btn-primary">
+            <span>🎂</span> Continue to the Birthday Cake
+          </button>
         </div>
       </div>
     </section>
@@ -334,9 +338,40 @@
           <button id="btn-experience-again" class="btn-story btn-replay">
             <span>↻</span> Experience Again
           </button>
+
+          <!-- Scene Quick-Jump Dropdown to Relive Specific Moments -->
+          <div class="scene-jump-container">
+            <label for="scene-jump-select" class="scene-jump-label">✨ Relive a Specific Chapter:</label>
+            <div class="scene-jump-select-wrap">
+              <select id="scene-jump-select" class="scene-jump-select">
+                <option value="" disabled selected>Choose a chapter to revisit...</option>
+                <option value="pinata">🎮 The Fairytale Piñata Quest</option>
+                <option value="exit">🥺 Doraemon &amp; Nobita's Heartfelt Realm</option>
+                <option value="page2">💌 The Scalloped Envelope &amp; Love Letter</option>
+                <option value="gallery">🌸 The Polaroid Keepsake Gallery</option>
+                <option value="final">🎂 The Midnight Wish &amp; Candle Ceremony</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
     </section>
+
+    <!-- Floating Revisit Navigation HUD (Active when jumping to specific steps from final page) -->
+    <div id="revisit-nav-bar" class="revisit-nav-bar" style="display: none;">
+      <div class="revisit-nav-info">
+        <span class="revisit-nav-badge">✨ Reliving</span>
+        <span id="revisit-scene-name" class="revisit-scene-name">The Letter</span>
+      </div>
+      <div class="revisit-nav-actions">
+        <button id="btn-revisit-return" class="btn-story btn-revisit btn-revisit-return">
+          <span>⏩</span> Return to Final Page
+        </button>
+        <button id="btn-revisit-continue" class="btn-story btn-revisit btn-revisit-continue">
+          <span>▶️</span> Continue Natural Flow
+        </button>
+      </div>
+    </div>
 
   </main>
 

@@ -1,100 +1,193 @@
-# Interactive 21st Birthday Experience for Yuhashvi ♡
+# 🌸 A Special Day For Yuhashvi ♡ | 21st Birthday Interactive Experience
 
-A beautiful, cinematic, and responsive interactive story-game website created specifically for **Yuhashvi** celebrating her **21st birthday on September 11**.
-
----
-
-## 🌟 Story & Experience Flow
-
-1. **Opening Scene (Page 1)**:
-   - Preserves the warm, dreamy miniature atmosphere with the cute smooth brown bear vinyl figure in a pink polka-dot swimsuit and pink hibiscus flower by the miniature deck chairs.
-   - Clean left area with the question: *"How are you doing in your Favorite and special day of your life"*.
-   - Buttons: `[ 💖 Wish Accepted ]` and `[ 🚪 Exit ]`.
-
-2. **Exit Flow**:
-   - Clicking `[ Exit ]` transitions into a cinematic dark glassmorphism space with floating stars.
-   - Doraemon & Nobita sit side by side looking sad.
-   - **Proximity Interaction**: As your cursor approaches the `[ 🥺 Let's reconsider ]` button, their expressions smoothly transform into happy smiles with sparkling eyes and tiny floating hearts!
-   - On mobile, touching the button triggers the happy reaction.
-   - Clicking `[ Let's reconsider ]` returns smoothly to Page 1 without reloading.
-
-3. **Piñata Interactive Scene**:
-   - Cute animated fairytale outdoor environment.
-   - The girl walks naturally into the center from the left.
-   - The boy character peeks from the left and throws a baseball bat with a comic-style **"BAM!"** sound and pop effect.
-   - The girl picks up the bat and tries to hit the piñata 3 times, missing because it's too high.
-   - Her speech bubble asks: *"Help me! 🥺"*.
-   - A bright shooting star streaks across the upper sky, leaving glowing sparkles and unlocking the rope control handle on the right.
-   - **Core Gameplay Mechanic**:
-     - Moving mouse **UP** lowers the piñata.
-     - Moving mouse **DOWN** raises the piñata.
-     - Smooth elastic spring physics with safe vertical boundaries.
-     - Mobile: swipe finger vertically up and down to adjust height, then tap the prompt to strike!
-   - **Hit Sequence**:
-     - Hit 1: *THUMP!* (shaking)
-     - Hit 2: *BAM!* (cracks)
-     - Hit 3: *WHACK!* (more cracks)
-     - Hit 4: *CRACK!* (breaks!)
-   - **100 Doraemon Shower**:
-     - 100 miniature Doraemon dolls cascade down in waves with realistic bounce and rotation physics, piling up over the girl.
-     - Short comedic pause, then the dolls shift and the girl peeks out from the pile with a warm smile!
-   - **Birthday Reveal**:
-     - Upward animation of *"Happy Birthday"* and *"Yuhashvi ♡"* close to the girl.
-     - Button `[ 💌 I have something for you ]` appears to continue to Page 2.
-
-4. **Page 2: A Little Something For You & Interactive Envelope**:
-   - Soft pastel gradient card with floating hearts.
-   - Interactive envelope labeled *"For Yuhashvi ♡"*.
-   - Clicking `[ Open Your Envelope ]` shakes the envelope, releases floating hearts, flips the flap open, rises the letter paper, and reveals the personal message with a gradual typewriter effect.
-   - Button `[ 🌸 Continue ]` advances to the photo gallery.
-
-5. **Photo Section & Secret Doraemon Surprise**:
-   - Tasteful scrapbook/polaroid gallery with gentle tilts, hover straighten, scaling, and glow.
-   - Heading: *"A few pictures of someone who deserves a beautiful day ♡"*.
-   - **Secret Discovery**: A hidden Doraemon figure is tucked on one of the polaroids. Clicking it pops out Doraemon with: *"Psst... I have one more thing for you! 👀"* and displays a gift box.
-   - Clicking `[ 🎁 Open ]` triggers a confetti celebration burst with sound, displaying *"You found the secret! ♡"*, followed by *"But there's one last thing..."*.
-
-6. **Final Screen & Candle Blow**:
-   - Peaceful nighttime birthday scene with deep blue/purple sky, moon, stars, and soft bokeh.
-   - The girl sits beside an elegant cake with a glowing **"21"** candle with a gently flickering flame.
-   - Emotional final birthday message and `[ ✨ One Last Thing ]` button.
-   - When clicked, the girl gently blows toward the candle, extinguishing the flame with a curl of smoke.
-   - The scene darkens momentarily, and hundreds of magical twinkling starlight sparkles ignite across the sky!
-   - Displays: *"Keep smiling. ♡"* with the `[ ↻ Experience Again ]` button, which seamlessly loops back to Page 1 without a full browser reload.
+A cinematic, interactive story-game website crafted to celebrate **Yuhashvi's 21st Birthday** on **September 11**. Designed with whimsical storytelling, rich physics-driven interactions, authentic 3D animations, custom typography in **Harlow Solid Italic**, a realigned 4-portion background soundtrack system at a soothing volume level, a majestic Baroque Golden Gate leading to the memory gallery, a midnight wish ceremony, and an interactive memory quick-jump dropdown.
 
 ---
 
-## 🎵 Global Music System
+## 🌟 The 7-Scene Cinematic Journey
 
-- **Zero Missing Audio Errors**: Features a built-in procedural Web Audio synthesizer that generates dreamy ambient kalimba/piano melodies and playful sound effects out of the box.
-- **Custom Audio Support**: To use your own MP3 files, simply drop them into `assets/audio/` and specify the file path in `config.js`:
-  ```javascript
-  audio: {
-    openingMusic: "assets/audio/opening.mp3",
-    pinataMusic: "assets/audio/pinata.mp3",
-    finalMusic: "assets/audio/final.mp3",
-  }
-  ```
-- **Persistent Controls**: Small floating button in top-right corner (`♪ / 🔇`) allows instant muting/unmuting anytime.
-- **Browser Autoplay Compliant**: A gentle "Tap to begin ♡" welcome screen ensures audio context unlocks smoothly on modern browsers.
+```mermaid
+graph TD
+    A["Scene 1: Opening - Miniature Bear on Deck Chair"] -->|Exit Button| B["Scene 2: Exit Flow - Proximity Smiling Doraemon & Nobita"]
+    B -->|Let's Reconsider| A
+    B -->|Yes, go to final page| G["Scene 7: Midnight Wish & Cake - Candle Blow, Shooting Stars & Replay"]
+    A -->|Wish Accepted| C["Scene 3: Piñata Adventure - Boy, Bat, Inverted Spring, 100 Dolls"]
+    C -->|I Have Something For You| D["Scene 4: Luxury Envelope & Letter - Harlow Solid Italic & Chibi Nobita Key Chase"]
+    D -->|Approach Baroque Gate| E["Scene 5: Baroque Golden Gate - Heart Padlock & 3D Swinging Doors"]
+    E -->|Gateway Reveal| F["Scene 6: Polaroid Keepsake Gallery - 4 Photos & Memories"]
+    F -->|Continue to Birthday Cake| G
+    G -->|Experience Again| A
+    G -.->|Quick-Jump Dropdown| C
+    G -.->|Quick-Jump Dropdown| B
+    G -.->|Quick-Jump Dropdown| D
+    G -.->|Quick-Jump Dropdown| F
+    G -.->|Quick-Jump Dropdown| G
+```
+
+### 1. Scene 1: Opening Scene (`#scene-page1`)
+- **Visuals**: A warm, dreamy miniature atmosphere preserving the cute smooth brown bear in a pink polka-dot swimsuit and hibiscus flower resting on beach deck chairs.
+- **Atmosphere**: Gentle floating bokeh particles, ambient lighting, and high-contrast glassmorphic card on the left.
+- **Narrative**: *"How are you doing in your Favorite and special day of your life ?"*
+- **Choices**:
+  - `[ 💖 Wish Accepted ]` → Begins the magical journey into the Piñata Adventure.
+  - `[ 🚪 Exit ]` → Enters the playful Doraemon & Nobita exit flow.
+
+### 2. Scene 2: Playful Exit Flow (`#scene-exit`)
+- **Visuals**: A cosmic dark glassmorphism space with floating stars and deep space nebulae.
+- **Interactive Proximity**: Doraemon and Nobita sit looking sad (*"Are you truly ready to leave this behind?"*). As your mouse cursor or touch approaches the `[ 🥺 Let's See where things go ]` button, their facial expressions smoothly transition into bright, cheerful smiles with sparkling eyes!
+- **Ongoing Page Complete Teardown**: Whenever navigating to the exit page from any ongoing scene (Scene 1, Piñata, Letter, Gate, Gallery), all ongoing background timers, loops, physics RAFs, and character animations are completely stopped.
+- **Two Clear Choices**:
+  1. `[ 🥺 Let's See where things go ]`: Doraemon & Nobita smile happily and return smoothly to Scene 1 to continue the story.
+  2. `[ 🚪 Yes, go to final page ]`: Completely stops the exit scene, switches audio mood to Portion 4 (`final.mp3`), and moves directly to the final birthday cake celebration (`#scene-final`) where Yuhashvi can blow the candles and make her wish!
+
+### 3. Scene 3: Piñata Adventure (`#scene-pinata`)
+- **Cinematic Prologue**:
+  - The chibi girl character walks gracefully onto the fairytale pastel meadow.
+  - The boy character peeks from behind a tree on the left and throws an authentic 3D wooden baseball bat across the screen with a comic **"BAM!"** sound.
+  - The girl catches the bat and attempts 3 jumping swings, missing because the piñata is hanging too high.
+  - Her speech bubble asks: *"Help me! 🥺"*.
+  - A bright shooting star streaks across the sky, cascading starlight down the rope and unlocking the interactive height control handle.
+- **Core Mechanics**:
+  - **Inverted Spring Physics**: Moving the mouse **UP** lowers the piñata so she can reach it; moving **DOWN** raises it.
+  - **4-Hit Breaking Sequence**: `THUMP!` → `BAM!` → `WHACK!` → `CRACK!` (shatters in an explosion of confetti).
+  - **100 Doraemon Cascade**: A shower of 100 miniature Doraemon dolls tumbles down with full gravity, bouncing and burying the stage. After a comedic beat, the girl peeks out from the doll mound with a joyful smile!
+  - **Royal Scroll Banner**: An unrolling ancient parchment reveals *"Happy Birthday Yuhashvi ♡"* and the button `[ 💌 I have something for you ]`.
+
+### 4. Scene 4: Luxury Envelope, Letter & Chibi Nobita Chase (`#scene-page2`)
+- **Visuals**: Soft pastel cream and rose gradient background with floating heart particles.
+- **Stationery Design**: A luxury rectangular ivory envelope adorned with burgundy ribbon, ornate corner florals, gold accents, and a central wax seal.
+- **Interactive Wax Seal**: Clicking either the wax seal or `[ 💌 Open Your Envelope ]` flips the flap open and slides out the textured parchment paper.
+- **Custom Typography**: The letter is rendered in **Harlow Solid Italic** (`'Harlow Solid Italic', 'Harlow Solid', 'Alex Brush', cursive, sans-serif`).
+- **Word-Processor Vertical Scrollbar**: Features a clean custom vertical scrollbar (`overflow-y: auto !important`) that allows smooth scrolling through the heartfelt Tamil message like a Microsoft Word document, with automatic scroll-tracking during the typewriter effect.
+- **Exact Narrative Sequence**:
+  1. Recipient taps the golden wax seal or `[ 💌 Open Your Envelope ]`.
+  2. Envelope flap flips open and textured parchment rises out.
+  3. The letter text types out smoothly in **Harlow Solid Italic**. Nobita and the Approach Gate button are strictly hidden during this time.
+  4. **Only after all words are revealed**, Chibi Nobita appears in the lower safe lane and runs back and forth holding the **Golden Heart Key** (*"Catch me! 🏃‍♂️"*).
+  5. Catching Nobita displays the celebratory modal and officially unlocks the `[ 🗝️ Approach the Baroque Gate ]` button. User can either approach immediately or stay to admire the letter before advancing.
+
+### 5. Scene 5: Baroque Golden Gate (`#scene-gate`)
+- **Photorealistic 3D Architecture**:
+  - Rendered with 100% transparent alpha background.
+  - Sliced into Left Marble Pillar with Glass Lantern, Right Marble Pillar with Glass Lantern, and Left and Right Full-Height Ornate Golden Doors.
+  - Center features an intricately carved **Heart Padlock** with keyhole.
+- **Unlocking Mechanism**:
+  - Clicking the padlock assembly makes the Golden Heart Key float into the keyhole.
+  - The key inserts and turns **90°** with a crisp metallic chime.
+  - The padlock releases with a sparkle burst and drops away.
+  - Both doors physically swing open in 3D perspective (`perspective(1200px) rotateY(-82deg)` and `rotateY(82deg)`).
+  - Through the open gateway, the celestial portal transitions directly into **The Polaroid Keepsake Gallery**!
+
+### 6. Scene 6: Polaroid Keepsake Gallery (`#scene-gallery`)
+- **Polaroid Display**: Four vintage polaroid cards with organic rotations (`-4°`, `+3°`, `-2°`, `+4°`), soft drop shadows, and thoughtful captions celebrating Yuhashvi.
+- **Hover & Focus**: Hovering any card smoothly straightens it, elevates it with a golden glow, and zooms the photo.
+- **Progression**: Button `[ 🎂 Continue to the Birthday Cake ]` advances directly to the final night celebration.
+
+### 7. Scene 7: Midnight Wish, Candle Extinguish & Memory Revisit (`#scene-final`)
+- **Photographic Dual-Layer Engine**:
+  - **Base Layer**: High-resolution night garden scene with lit candles on a birthday cake, glowing lanterns, and Yuhashvi in traditional attire.
+  - **Dynamic Candle Flames**: Realistic CSS canvas flicker flames superimposed on the cake candles.
+- **Candle Blow Sequence**:
+  - Clicking `[ ✨ Blow the Candles & Make a Wish ]` emits a focused breath particle stream toward the cake.
+  - Candle flames extinguish, producing realistic rising curls of smoke.
+  - The lit layer crossfades seamlessly into the midnight starfield layer (`final_night_stars.jpg`) featuring shooting stars and purple nebula skies.
+  - A frosted card presents the birthday message:
+    > *"The world needs a doctor with a heart like yours. Go get it."*
+    > 
+    > **Keep smiling. ♡**
+  - Clicking `[ ↻ Experience Again ]` cleanly resets all 7 scenes, animations, audio tracks, and particles, returning to Scene 1 without refreshing the browser.
+- **Memory Quick-Jump Dropdown**:
+  - Located right below the Experience Again button.
+  - Allows instant access to any specific memory chapter:
+    1. 🎮 The Fairytale Piñata Quest
+    2. 🥺 Doraemon & Nobita's Heartfelt Realm
+    3. 💌 The Scalloped Envelope & Love Letter
+    4. 🌸 The Polaroid Keepsake Gallery
+    5. 🎂 The Midnight Wish & Candle Ceremony
+- **Two-Option Revisit Navigation HUD**:
+  - When revisiting a specific step, a floating HUD appears at the top giving two choices:
+    - `[ ⏩ Return to Final Page ]`: Instantly returns to the midnight cake scene with the celebration card and stars intact!
+    - `[ ▶️ Continue Natural Flow ]`: Hides the HUD and allows the recipient to continue playing naturally from that point forward!
 
 ---
 
-## ✏️ How to Edit Content & Placeholders
+## 🎵 4-Portion Audio Architecture
 
-All customizable placeholders are cleanly centralized in `config.js`:
+The site divides its soundtrack into four continuous portions, ensuring no abrupt restarts and playing at a gentle, non-intrusive sound level (**volume 0.20 / 20%**):
 
-1. **Messages**:
-   - `page2.littleSomethingMessage`: Text shown on Page 2 card.
-   - `page2.envelopeText`: Letter text inside the interactive envelope.
-   - `finalScreen.finalMessage`: Final message displayed on the nighttime cake screen.
+| Audio Portion | Scenes Active | Audio Track File | Continuity Behavior |
+| :--- | :--- | :--- | :--- |
+| **Portion 1: Opening & Exit** | Scene 1 (Page 1) & Scene 2 (Exit) | `assets/audio/opening.mp3` | Plays from "Let's Begin" through Page 1 and Exit flow with zero restart. |
+| **Portion 2: Piñata Game** | Scene 3 (Piñata Adventure) | `assets/audio/pinata.mp3` | Dedicated energetic soundtrack playing throughout the entire piñata game and 100 Doraemon doll cascade. |
+| **Portion 3: The Letter** | Scene 4 (Envelope & Letter) | `assets/audio/letter_gallery.mp3` | Soothing romantic piano & acoustic melody for unsealing and reading the letter. |
+| **Portion 4: Gate, Gallery & Cake** | Scene 5 (Gate), Scene 6 (Gallery), Scene 7 (Cake) | `assets/audio/final.mp3` | **One shared soundtrack** that starts at the Baroque Gate unlock and plays continuously across Gate, Gallery, and the Cake scene without interruption! |
 
-2. **Photos & Captions**:
-   - `photoGallery.photos`: Array of polaroid images (`src`), captions, and subtle tilt angles (`rotation`). Replace `assets/images/photo_01.jpg` through `photo_04.jpg` with any portrait images.
+### Built-in Procedural Audio Synthesizer Fallback
+If custom MP3 files are omitted or blocked by browser policies, the built-in procedural Web Audio API synthesizer automatically produces dreamy kalimba notes, metallic clicks, confetti pops, and ambient pads so that **no audio error ever occurs**.
 
 ---
 
-## 🚀 How to Run
+## ⚡ Synchronized Progressive Preloader
 
-1. Simply double-click `index.html` to open it in Chrome, Edge, Brave, or any modern web browser.
-2. Alternatively, serve via any local static web server or host on GitHub Pages / Firebase Hosting / Netlify.
+A byte-accurate download manager tracks all 29 essential assets (totaling **17.2 MB**):
+- **Live Byte Tracking**: Shows real-time downloaded megabytes (`XX.X MB / 17.2 MB`) and percentage.
+- **Audio Priority**: Prioritizes downloading `opening.mp3` first so music is ready the exact instant the user clicks "Let's Begin".
+- **Earphones & Desktop Hints**: Highlighting recommendations for best audio and visual immersion.
+
+---
+
+## 📂 Project Directory Structure
+
+```text
+Yuhashvi_Key-B-day/
+├── index.html                  # Main single-page application entry point
+├── style.css                   # Complete stylesheet (responsive, 3D gates, scrollbars, revisit HUD)
+├── config.js                   # Master configuration for all texts, photos & audio
+├── README.md                   # Project overview & documentation
+├── CUSTOMIZATION_GUIDE.md      # Comprehensive asset replacement manual
+├── assets/
+│   ├── audio/                  # Audio tracks (opening, pinata, letter_gallery, final)
+│   ├── characters/             # Girl, boy, runner sprites
+│   └── images/                 # Gate slices, polaroids, envelope, final night scenes
+└── js/
+    ├── app.js                  # Finite State Machine & revisit HUD orchestrator
+    ├── audio-system.js         # 4-portion audio engine & Web Audio synthesizer
+    ├── preloader.js            # Progressive asset preloader with byte counter
+    ├── particle-system.js      # Fullscreen canvas particles (confetti, bokeh, stars)
+    ├── doraemon-physics.js     # 2D physics engine for 100 falling Doraemon dolls
+    ├── characters/
+    │   ├── girl-character.js   # Articulated puppet controller for the girl
+    │   └── boy-character.js    # Peeking & bat throwing controller
+    └── scenes/
+        ├── page1-scene.js      # Scene 1: Opening
+        ├── exit-scene.js       # Scene 2: Exit flow with proximity smiles
+        ├── pinata-scene.js     # Scene 3: Piñata mini-game
+        ├── page2-envelope.js   # Scene 4: Luxury envelope, letter & Nobita key chase
+        ├── gate-scene.js       # Scene 5: Baroque Golden Gate & padlock
+        ├── photo-gallery.js    # Scene 6: Scrapbook & polaroids
+        └── final-scene.js      # Scene 7: Midnight wish, candle blow & chapter jump
+```
+
+---
+
+## 🚀 How to Run Locally
+
+### Option 1: Direct Browser Launch
+Double-click `index.html` to open it in Google Chrome, Microsoft Edge, Mozilla Firefox, or Brave.
+
+### Option 2: Local Static Server (Recommended)
+Using Node.js:
+```bash
+npx serve .
+```
+Or with Python:
+```bash
+python -m http.server 8080
+```
+Then navigate to `http://localhost:8080/` in your browser.
+
+---
+
+## 🛠️ Modifying & Customizing Content
+
+To customize texts, photos, audio, or colors without touching any game logic, refer to the full **[CUSTOMIZATION_GUIDE.md](file:///k:/Yuhashvi_Key-B-day/CUSTOMIZATION_GUIDE.md)**.
