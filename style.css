@@ -1060,7 +1060,7 @@ html, body {
   opacity: 1;
 }
 
-/* Mobile Pinata Tap Button */
+/* Mobile Pinata Tap Button (Coarse touch fallback) */
 .mobile-tap-prompt {
   position: absolute;
   bottom: 90px;
@@ -1075,6 +1075,76 @@ html, body {
 .mobile-tap-prompt.visible {
   opacity: 1;
   visibility: visible;
+}
+
+/* On mouse/desktop environments, hide the bottom static button so only cursor tooltip shows */
+@media (hover: hover) and (pointer: fine) {
+  .mobile-tap-prompt {
+    display: none !important;
+  }
+}
+
+/* Floating Pinata Cursor Tooltip: Displayed next to mouse pointer */
+.pinata-cursor-prompt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.2s ease;
+  user-select: none;
+  will-change: left, top, opacity;
+}
+
+.pinata-cursor-prompt.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pinata-cursor-prompt-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 15px;
+  background: linear-gradient(135deg, rgba(255, 75, 110, 0.95), rgba(255, 120, 150, 0.95));
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  border-radius: 999px;
+  box-shadow: 0 4px 18px rgba(255, 75, 110, 0.45), 0 0 10px rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  animation: cursorPromptBob 1.2s ease-in-out infinite alternate;
+}
+
+.pinata-cursor-prompt-inner .prompt-icon {
+  font-size: 15px;
+  line-height: 1;
+  animation: cursorPromptTargetSpin 2s ease-in-out infinite;
+}
+
+@keyframes cursorPromptBob {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(-3px) scale(1.04);
+  }
+}
+
+@keyframes cursorPromptTargetSpin {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
 }
 
 /* Birthday Reveal Overlay with Floating Golden Arch & Bottom Button */

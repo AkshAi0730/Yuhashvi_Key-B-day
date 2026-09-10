@@ -9,13 +9,12 @@ A cinematic, interactive story-game website crafted to celebrate **Yuhashvi's 21
 ```mermaid
 graph TD
     A["Scene 1: Opening - Miniature Bear on Deck Chair"] -->|Exit Button| B["Scene 2: Exit Flow - Proximity Smiling Doraemon & Nobita"]
-    B -->|Let's Reconsider| A
-    B -->|Yes, go to final page| G["Scene 7: Midnight Wish & Cake - Candle Blow, Shooting Stars & Replay"]
+    B -->|Let's Consider| A
     A -->|Wish Accepted| C["Scene 3: Piñata Adventure - Boy, Bat, Inverted Spring, 100 Dolls"]
     C -->|I Have Something For You| D["Scene 4: Luxury Envelope & Letter - Harlow Solid Italic & Chibi Nobita Key Chase"]
     D -->|Approach Baroque Gate| E["Scene 5: Baroque Golden Gate - Heart Padlock & 3D Swinging Doors"]
     E -->|Gateway Reveal| F["Scene 6: Polaroid Keepsake Gallery - 4 Photos & Memories"]
-    F -->|Continue to Birthday Cake| G
+    F -->|Continue to Birthday Cake| G["Scene 7: Midnight Wish & Cake - Candle Blow, Shooting Stars & Replay"]
     G -->|Experience Again| A
     G -.->|Quick-Jump Dropdown| C
     G -.->|Quick-Jump Dropdown| B
@@ -34,11 +33,10 @@ graph TD
 
 ### 2. Scene 2: Playful Exit Flow (`#scene-exit`)
 - **Visuals**: A cosmic dark glassmorphism space with floating stars and deep space nebulae.
-- **Interactive Proximity**: Doraemon and Nobita sit looking sad (*"Are you truly ready to leave this behind?"*). As your mouse cursor or touch approaches the `[ 🥺 Let's See where things go ]` button, their facial expressions smoothly transition into bright, cheerful smiles with sparkling eyes!
+- **Interactive Proximity**: Doraemon and Nobita sit looking sad (*"Are you truly ready to leave this behind?"*). As your mouse cursor or touch approaches the `[ 🥺 Let's consider ]` button, their facial expressions smoothly transition into bright, cheerful smiles with sparkling eyes!
 - **Ongoing Page Complete Teardown**: Whenever navigating to the exit page from any ongoing scene (Scene 1, Piñata, Letter, Gate, Gallery), all ongoing background timers, loops, physics RAFs, and character animations are completely stopped.
-- **Two Clear Choices**:
-  1. `[ 🥺 Let's See where things go ]`: Doraemon & Nobita smile happily and return smoothly to Scene 1 to continue the story.
-  2. `[ 🚪 Yes, go to final page ]`: Completely stops the exit scene, switches audio mood to Portion 4 (`final.mp3`), and moves directly to the final birthday cake celebration (`#scene-final`) where Yuhashvi can blow the candles and make her wish!
+- **Single Reconsideration Option**:
+  - `[ 🥺 Let's consider ]`: Doraemon & Nobita smile happily and return smoothly to Scene 1 to continue the magical story.
 
 ### 3. Scene 3: Piñata Adventure (`#scene-pinata`)
 - **Cinematic Prologue**:
@@ -49,6 +47,7 @@ graph TD
   - A bright shooting star streaks across the sky, cascading starlight down the rope and unlocking the interactive height control handle.
 - **Core Mechanics**:
   - **Inverted Spring Physics**: Moving the mouse **UP** lowers the piñata so she can reach it; moving **DOWN** raises it.
+  - **Floating Cursor Tooltip**: When the piñata is pulled down into striking range, a glowing pill prompt `[ 🎯 Tap to hit piñata ]` dynamically tracks the mouse pointer. It only appears when she can reach and hit, hiding automatically if raised out of reach or while she is mid-swing!
   - **4-Hit Breaking Sequence**: `THUMP!` → `BAM!` → `WHACK!` → `CRACK!` (shatters in an explosion of confetti).
   - **100 Doraemon Cascade**: A shower of 100 miniature Doraemon dolls tumbles down with full gravity, bouncing and burying the stage. After a comedic beat, the girl peeks out from the doll mound with a joyful smile!
   - **Royal Scroll Banner**: An unrolling ancient parchment reveals *"Happy Birthday Yuhashvi ♡"* and the button `[ 💌 I have something for you ]`.

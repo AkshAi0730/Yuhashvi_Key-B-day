@@ -28,8 +28,7 @@ window.BIRTHDAY_CONFIG = {
   // ==========================================
   exitScene: {
     title: "Are you truly ready to leave this behind?",
-    btnReconsider: "Let's See where things go",
-    btnLeave: "Yes, go to final page"
+    btnReconsider: "Let's consider"
   },
 
   // ==========================================
@@ -40,6 +39,7 @@ window.BIRTHDAY_CONFIG = {
     instructionDesktop: "Help her reach it!",
     instructionMobile: "Move your finger up and down to help her!",
     mobileTapPrompt: "Tap when she can reach it!",
+    tapPrompt: "Tap to hit piñata",
     hit1Text: "THUMP!",
     hit2Text: "BAM!",
     hit3Text: "WHACK!",

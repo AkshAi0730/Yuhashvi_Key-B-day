@@ -94,14 +94,9 @@
           <img src="assets/images/exit_doraemon_happy.jpg" id="exit-char-happy" class="exit-char-img exit-char-happy" alt="Doraemon and Nobita happy" />
         </div>
         <h2 id="exit-question" class="exit-question">Are you sure wanna leave?</h2>
-        <div class="exit-actions-wrap" style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
-          <button id="btn-reconsider" class="btn-story btn-dark">
-            <span>🥺</span> Let's reconsider
-          </button>
-          <button id="btn-exit-to-final" class="btn-story btn-primary">
-            <span>🚪</span> Yes, go to final page
-          </button>
-        </div>
+        <button id="btn-reconsider" class="btn-story btn-dark">
+          <span>🥺</span> Let's consider
+        </button>
         <div class="proximity-hint">(Move closer to make them smile ✨)</div>
       </div>
     </section>
@@ -156,9 +151,17 @@
         <!-- 3D Doraemon Mound Layer: Foreground (In Front of Girl) -->
         <canvas id="doraemon-fg-canvas"></canvas>
 
-        <!-- Mobile Tap Prompt -->
+        <!-- Mobile Tap Prompt (Coarse Touch Fallback) -->
         <div id="btn-mobile-tap" class="mobile-tap-prompt">
           <button class="btn-story btn-primary">🎯 Tap to Hit Piñata!</button>
+        </div>
+
+        <!-- Floating Cursor Tooltip: Shown next to mouse pointer only when girl can reach & hit -->
+        <div id="pinata-cursor-prompt" class="pinata-cursor-prompt" aria-hidden="true">
+          <div class="pinata-cursor-prompt-inner">
+            <span class="prompt-icon">🎯</span>
+            <span class="prompt-text">Tap to hit piñata</span>
+          </div>
         </div>
       </div>
 

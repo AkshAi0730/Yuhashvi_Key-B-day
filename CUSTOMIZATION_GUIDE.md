@@ -72,12 +72,11 @@ page1: {
 ```javascript
 exitScene: {
   title: "Are you truly ready to leave this behind?",
-  btnReconsider: "Let's See where things go", // Button that smiles on proximity (returns to story)
-  btnLeave: "Yes, go to final page"          // Leaves the exit page and moves directly to final celebration!
+  btnReconsider: "Let's consider" // Button that smiles on proximity (returns to story)
 }
 ```
 > [!TIP]
-> Navigating to the exit page automatically freezes and tears down any ongoing animations (girl walking, bat swing, typewriter effect, or audio) from previous scenes. Clicking `[ 🚪 Yes, go to final page ]` smoothly transitions directly to the final midnight wish ceremony.
+> Navigating to the exit page automatically freezes and tears down any ongoing animations (girl walking, bat swing, typewriter effect, or audio) from previous scenes. Hovering or moving closer to `[ 🥺 Let's consider ]` makes Doraemon and Nobita smile, and clicking it smoothly returns to Scene 1 to continue the magical journey.
 
 ### 3.4. Scene 3: Piñata Adventure
 ```javascript
@@ -85,6 +84,8 @@ pinataScene: {
   helpSpeech: "Help me! 🥺",                    // Girl's speech bubble when missing
   instructionDesktop: "Help her reach it!",    // Helper hint on desktop
   instructionMobile: "Move your finger up and down to help her!",
+  mobileTapPrompt: "Tap when she can reach it!",
+  tapPrompt: "Tap to hit piñata",              // Floating pill shown next to mouse pointer when in striking range
   hit1Text: "THUMP!",                          // Comic sound text on hit 1
   hit2Text: "BAM!",                            // Comic sound text on hit 2
   hit3Text: "WHACK!",                          // Comic sound text on hit 3
@@ -94,6 +95,8 @@ pinataScene: {
   btnContinueToPage2: "something for you"      // Continue button label
 }
 ```
+> [!TIP]
+> The `tapPrompt` tooltip automatically tracks the user's mouse cursor across the screen. It stays hidden whenever the piñata is out of reach or while the girl is mid-jump, and only displays when the piñata is pulled into striking distance. Clicking anywhere on the screen while this prompt is visible immediately strikes the piñata.
 
 ### 3.5. Scene 4: Luxury Envelope & Personal Letter
 ```javascript
