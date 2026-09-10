@@ -158,6 +158,6 @@ Wish you a very happy, peaceful life ahead. Have an amazing day! 🤍✨`,
     letterMusic: "assets/audio/letter_gallery.mp3",        // Portion 3: The Letter & Envelope
     letterGalleryMusic: "assets/audio/letter_gallery.mp3", // Backward compatibility alias
     finalMusic: "assets/audio/final.mp3",                  // Portion 4: Gate, Gallery & Cake scene
-    defaultVolume: 0.20                                    // Mild volume level (~20%)
+    defaultVolume: 0.35                                    // Mild volume level (~20%)
   }
 };
