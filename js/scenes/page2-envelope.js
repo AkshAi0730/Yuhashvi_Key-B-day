@@ -397,6 +397,27 @@ class Page2EnvelopeScene {
       }, 20);
     }
   }
+
+  completeTypewriterInstantly() {
+    if (this.typewriterTimer) {
+      clearInterval(this.typewriterTimer);
+      this.typewriterTimer = null;
+    }
+    const cfg = window.BIRTHDAY_CONFIG ? window.BIRTHDAY_CONFIG.page2 : null;
+    const fullText = cfg ? cfg.envelopeText : "Wishing you a wonderful 21st birthday!";
+    if (this.letterTextEl) {
+      this.letterTextEl.textContent = fullText;
+    }
+    if (this.letterPaper) {
+      this.letterPaper.scrollTop = this.letterPaper.scrollHeight;
+    }
+    if (!this.isCaught && this.chaseContainer) {
+      this.chaseContainer.style.display = 'block';
+      this.chaseContainer.style.transition = 'opacity 0.6s ease';
+      this.chaseContainer.style.opacity = '1';
+      this.startNobitaRun();
+    }
+  }
 }
 
 window.Page2EnvelopeScene = Page2EnvelopeScene;

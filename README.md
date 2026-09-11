@@ -112,7 +112,7 @@ graph TD
 
 ## 🎵 4-Portion Audio Architecture
 
-The site divides its soundtrack into four continuous portions, ensuring no abrupt restarts and playing at a gentle, non-intrusive sound level (**volume 0.20 / 20%**):
+The site divides its soundtrack into four continuous portions, ensuring no abrupt restarts and playing at an optimal, crystal-clear sound level (**volume 0.39 / 39%**):
 
 | Audio Portion | Scenes Active | Audio Track File | Continuity Behavior |
 | :--- | :--- | :--- | :--- |
@@ -128,8 +128,8 @@ If custom MP3 files are omitted or blocked by browser policies, the built-in pro
 
 ## ⚡ Synchronized Progressive Preloader
 
-A byte-accurate download manager tracks all 29 essential assets (totaling **17.2 MB**):
-- **Live Byte Tracking**: Shows real-time downloaded megabytes (`XX.X MB / 17.2 MB`) and percentage.
+A byte-accurate download manager tracks all 30 essential assets (totaling **20.98 MB**):
+- **Live Byte Tracking**: Shows real-time downloaded megabytes (`XX.X MB / 20.98 MB`) and percentage.
 - **Audio Priority**: Prioritizes downloading `opening.mp3` first so music is ready the exact instant the user clicks "Let's Begin".
 - **Earphones & Desktop Hints**: Highlighting recommendations for best audio and visual immersion.
 

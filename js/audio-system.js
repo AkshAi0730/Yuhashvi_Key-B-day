@@ -15,7 +15,7 @@ class AudioSystem {
     this.masterGain = null;
     this.musicGain = null;
     this.sfxGain = null;
-    this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.20;
+    this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.39;
     this.currentAudioElement = null;
     this.currentAudioSrc = null;
     this.currentPortion = null;
@@ -70,7 +70,7 @@ class AudioSystem {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioContext();
 
-      this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.20;
+      this.targetVolume = (window.BIRTHDAY_CONFIG && window.BIRTHDAY_CONFIG.audio && window.BIRTHDAY_CONFIG.audio.defaultVolume) || 0.39;
 
       // Master Gain
       this.masterGain = this.ctx.createGain();
@@ -226,9 +226,9 @@ class AudioSystem {
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.then(() => {
-        // Fade in new audio up to mild target volume (~0.20)
+        // Fade in new audio up to target volume (0.39)
         let vol = 0;
-        const target = this.targetVolume || 0.20;
+        const target = this.targetVolume || 0.39;
         const fadeIn = setInterval(() => {
           vol += 0.02;
           if (vol >= target) {

@@ -14,11 +14,11 @@ class AssetPreloader {
     // Essential assets list with exact byte weights
     // Opening song is item 0 (first priority)
     this.assets = [
-      { url: 'assets/audio/opening.mp3', size: 3673580, type: 'audio', isOpening: true, label: 'Opening Melody' },
+      { url: 'assets/audio/opening.mp3', size: 2555641, type: 'audio', isOpening: true, label: 'Opening Melody' },
       { url: 'assets/images/page1_bear_scene.jpg', size: 647169, type: 'image' },
       { url: 'assets/images/exit_doraemon_sad.jpg', size: 583036, type: 'image' },
       { url: 'assets/images/exit_doraemon_happy.jpg', size: 461295, type: 'image' },
-      { url: 'assets/audio/pinata.mp3', size: 492075, type: 'audio' },
+      { url: 'assets/audio/pinata.mp3', size: 635020, type: 'audio' },
       { url: 'assets/images/pinata_fairytale_bg.jpg', size: 728751, type: 'image' },
       { url: 'assets/images/pinata_star_intact.png', size: 982465, type: 'image' },
       { url: 'assets/images/pinata_star_cracked.png', size: 737042, type: 'image' },
@@ -31,18 +31,19 @@ class AssetPreloader {
       { url: 'assets/images/envelope_rectangular.png', size: 1269670, type: 'image' },
       { url: 'assets/characters/nobita_runner.png', size: 190145, type: 'image' },
       { url: 'assets/images/golden_heart_key.png', size: 271583, type: 'image' },
+      { url: 'assets/audio/letter_gallery.mp3', size: 3950072, type: 'audio' },
       { url: 'assets/images/photo_01.jpg', size: 68133, type: 'image' },
       { url: 'assets/images/photo_02.jpg', size: 61684, type: 'image' },
       { url: 'assets/images/photo_03.jpg', size: 69269, type: 'image' },
       { url: 'assets/images/photo_04.jpg', size: 161889, type: 'image' },
-      { url: 'assets/images/gate_pillar_left_v2.png', size: 222678, type: 'image' },
-      { url: 'assets/images/gate_pillar_right_v2.png', size: 210738, type: 'image' },
-      { url: 'assets/images/gate_leaf_full_left.png', size: 389388, type: 'image' },
-      { url: 'assets/images/gate_leaf_full_right.png', size: 391588, type: 'image' },
-      { url: 'assets/images/heart_padlock.png', size: 963580, type: 'image' },
+      { url: 'assets/images/gate_pillar_left_v2.png', size: 797769, type: 'image' },
+      { url: 'assets/images/gate_pillar_right_v2.png', size: 762362, type: 'image' },
+      { url: 'assets/images/gate_leaf_full_left.png', size: 1762050, type: 'image' },
+      { url: 'assets/images/gate_leaf_full_right.png', size: 1775780, type: 'image' },
+      { url: 'assets/images/heart_padlock.png', size: 339617, type: 'image' },
       { url: 'assets/images/final_night_lit.jpg', size: 719220, type: 'image' },
       { url: 'assets/images/final_night_stars.jpg', size: 693624, type: 'image' },
-      { url: 'assets/audio/final.mp3', size: 1542406, type: 'audio' }
+      { url: 'assets/audio/final.mp3', size: 4372251, type: 'audio' }
     ];
 
     this.totalBytes = this.assets.reduce((sum, item) => sum + item.size, 0);

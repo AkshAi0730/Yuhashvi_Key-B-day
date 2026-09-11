@@ -149,7 +149,7 @@ finalScreen: {
 
 ## 4. Audio Track Replacement (`assets/audio/`)
 
-The soundtrack is divided into **4 portions**, configured to play continuously at a mild volume level (**`0.20`** / 20%):
+The soundtrack is divided into **4 portions**, configured to play continuously at an optimal volume level (**`0.39`** / 39%):
 
 ```javascript
 audio: {
@@ -157,7 +157,7 @@ audio: {
   pinataMusic: "assets/audio/pinata.mp3",         // Portion 2: Piñata Game (entire scene)
   letterMusic: "assets/audio/letter_gallery.mp3", // Portion 3: The Letter & Envelope
   finalMusic: "assets/audio/final.mp3",           // Portion 4: Gate, Gallery & Cake scene (ONE continuous track!)
-  defaultVolume: 0.20                             // Mild background sound level
+  defaultVolume: 0.39                             // 39% background sound level
 }
 ```
 
